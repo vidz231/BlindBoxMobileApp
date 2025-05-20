@@ -1,4 +1,22 @@
 pluginManagement {
+    includeBuild("build-logic")
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        google() // Essential for AndroidX
+
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
         google {
             content {
@@ -8,18 +26,11 @@ pluginManagement {
             }
         }
         mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
     }
 }
 
-rootProject.name = "Blind Box App"
+rootProject.name = "BlindBoxApp"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":feature")
 include(":feature:home")

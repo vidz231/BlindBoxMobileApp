@@ -2,7 +2,21 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="Blind_Box_App.app" target="21" />
+      <module name="Blind_Box_App.common.base" target="21" />
+      <module name="Blind_Box_App.common.theme" target="21" />
+      <module name="Blind_Box_App.core.data" target="21" />
+      <module name="Blind_Box_App.core.data.main" target="11" />
       <module name="Blind_Box_App.core.data.test" target="11" />
+      <module name="Blind_Box_App.core.domain" target="21" />
+      <module name="Blind_Box_App.feature.cart" target="21" />
+      <module name="Blind_Box_App.feature.checkout" target="21" />
+      <module name="Blind_Box_App.feature.home" target="21" />
+      <module name="Blind_Box_App.feature.item_detail" target="21" />
+      <module name="Blind_Box_App.feature.order" target="21" />
+      <module name="Blind_Box_App.feature.order_detail" target="21" />
+      <module name="Blind_Box_App.feature.search" target="21" />
+      <module name="Blind_Box_App.feature.setting" target="21" />
       <module name="Blind_Box_App.home" target="21" />
       <module name="Blind_Box_App.mylibrary" target="21" />
       <module name="Blind_Box_App.mylibrary2" target="21" />

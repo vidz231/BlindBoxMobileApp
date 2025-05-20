@@ -1,36 +1,41 @@
 package com.vidz.blindboxapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.vidz.base.navigation.DestinationRoutes
-import com.vidz.home.addHomeGraph
-import kotlinx.serialization.Serializable
+import com.vidz.cart.addCartNavGraph
+import com.vidz.home.addHomeNavGraph
+import com.vidz.order.addOrderNavGraph
+import com.vidz.search.addSearchNavGraph
+import com.vidz.setting.addSettingNavGraph
 
 @Composable
 fun AppNavHost(
-     navController: NavHostController = rememberBlindboxNavController().navController,
+    navController: NavHostController ,
 ) {
-
-    val navController = rememberBlindboxNavController().navController
-
     NavHost(
         navController = navController,
         startDestination = DestinationRoutes.ROOT_HOME_SCREEN_ROUTE,
     ) {
-        navigation (
-            route = DestinationRoutes.ROOT_HOME_SCREEN_ROUTE,
-                    startDestination = DestinationRoutes.HOME_SCREEN_ROUTE
-        ){
-            addHomeGraph(navController)
-        }
+        addHomeGraph(navController)
     }
-
-
 }
 
-@Serializable
-data class  HomeNavigation(val id: String="");
+fun NavGraphBuilder.addHomeGraph(
+    navController: NavController,
+) {
+    navigation(
+        route = DestinationRoutes.ROOT_HOME_SCREEN_ROUTE,
+        startDestination = DestinationRoutes.HOME_SCREEN_ROUTE
+    ) {
+        addHomeNavGraph(navController)
+        addSearchNavGraph(navController)
+        addCartNavGraph(navController)
+        addSettingNavGraph(navController)
+        addOrderNavGraph(navController)
+    }
+}
