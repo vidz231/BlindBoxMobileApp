@@ -1,17 +1,16 @@
-package com.vidz.home
+package com.vidz.search
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.vidz.base.navigation.DestinationRoutes
 
-fun NavGraphBuilder.addHomeGraph(
+fun NavGraphBuilder.addSearchNavGraph(
     navController: NavController,
 ) {
-    composable(DestinationRoutes.HOME_SCREEN_ROUTE) {
-        HomeScreen(navController)
+    composable(DestinationRoutes.SEARCH_SCREEN_ROUTE) {
+        SearchScreen(navController)
     }
 
-
+    
 }

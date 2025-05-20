@@ -1,17 +1,16 @@
-package com.vidz.home
+package com.vidz.cart
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.vidz.base.navigation.DestinationRoutes
 
-fun NavGraphBuilder.addHomeGraph(
+fun NavGraphBuilder.addCartNavGraph(
     navController: NavController,
 ) {
-    composable(DestinationRoutes.HOME_SCREEN_ROUTE) {
-        HomeScreen(navController)
+    composable(DestinationRoutes.CART_SCREEN_ROUTE) {
+        CartScreen(navController)
     }
 
-
+    
 }
