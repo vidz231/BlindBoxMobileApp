@@ -1,0 +1,47 @@
+package com.vidz.data.di
+
+import com.squareup.moshi.Moshi
+import com.vidz.blindbox.core.data.BuildConfig
+// Removed direct API imports as RetrofitServer will provide them
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkModule {
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): Retrofit {
+        val moshi = Moshi.Builder()
+                .build()
+        return Retrofit.Builder()
+                .client(
+                    OkHttpClient.Builder()
+                        .addInterceptor(loggingInterceptor)
+                        .build()
+                )
+                .baseUrl(BuildConfig.BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+
+    // API Providers are now handled by RetrofitServer
+    // No need for individual provideAuthApi, provideAccountApi, etc. here anymore
+}

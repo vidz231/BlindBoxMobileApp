@@ -1,5 +1,5 @@
 import org.gradle.kotlin.dsl.implementation
-import com.vidz.convention.NiaBuildType
+import com.vidz.convention.BlindBoxBuildType
 
 plugins {
     alias(libs.plugins.blindbox.android.application)
@@ -16,21 +16,27 @@ plugins {
 android {
 
     defaultConfig {
-        applicationId = "com.google.samples.apps.blindbox"
+        applicationId = "com.vidz.app.blindbox"
         versionCode = 8
         versionName = "0.1.2" // X.Y.Z; X = Major, Y = minor, Z = Patch level
-
+//        buildConfigField(
+//            "String",
+//            "BASE_URL",
+//            "\"http://40.87.80.54:8080/\""
+//        )
         // Custom test runner to set up Hilt dependency graph
         testInstrumentationRunner = "com.google.samples.apps.blindbox.core.testing.NiaTestRunner"
     }
-
     buildTypes {
         debug {
-            applicationIdSuffix = NiaBuildType.DEBUG.applicationIdSuffix
+            applicationIdSuffix = BlindBoxBuildType.DEBUG.applicationIdSuffix
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
         release {
             isMinifyEnabled = true
-            applicationIdSuffix = NiaBuildType.RELEASE.applicationIdSuffix
+            isShrinkResources = true
+            applicationIdSuffix = BlindBoxBuildType.RELEASE.applicationIdSuffix
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
 
             // who clones the code to sign and run the release variant, use the debug signing key.
@@ -44,6 +50,12 @@ android {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
+    }
+
+    buildFeatures{
+        compose = true
+        buildConfig = true
+
     }
     testOptions {
         unitTests {

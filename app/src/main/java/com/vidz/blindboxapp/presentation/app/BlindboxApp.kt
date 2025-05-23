@@ -7,6 +7,7 @@ import android.net.http.SslCertificate.saveState
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
@@ -31,11 +32,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.multidex.BuildConfig
 import androidx.navigation.NavController
 
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vidz.base.navigation.DestinationRoutes
+import com.vidz.blindboxapp.BuildConfig
 import com.vidz.blindboxapp.presentation.navigation.AppNavHost
 import com.vidz.blindboxapp.presentation.navigation.rememberBlindboxNavController
 import com.vidz.theme.BlindBoxAppTheme
@@ -150,32 +151,31 @@ val bottomNavItems = listOf(
         DestinationRoutes.HOME_SCREEN_ROUTE
     ),
     BottomNavItem(
+        "Search",
+        Icons.Filled.Search,
+        DestinationRoutes.SEARCH_SCREEN_ROUTE
+    ),
+    BottomNavItem(
         "Cart",
         Icons.Filled.ShoppingCart,
         DestinationRoutes.CART_SCREEN_ROUTE
     ),
     BottomNavItem(
-        "Search",
-        Icons.Filled.Search,
-        DestinationRoutes.SEARCH_SCREEN_ROUTE
+        "Order",
+        Icons.AutoMirrored.Filled.List,
+        DestinationRoutes.ORDER_SCREEN_ROUTE
     ),
     BottomNavItem(
         "Setting",
         Icons.Filled.Settings,
         DestinationRoutes.SETTING_SCREEN_ROUTE
     ),
-    BottomNavItem(
-        "Order",
-        Icons.Filled.List,
-        DestinationRoutes.ORDER_SCREEN_ROUTE
-    )
 )
 
 @Composable
 fun BlindboxBottomAppBar(
     navController: NavController,
     currentRoute: String?,
-
     ) {
     NavigationBar {
         bottomNavItems.forEach { item ->
