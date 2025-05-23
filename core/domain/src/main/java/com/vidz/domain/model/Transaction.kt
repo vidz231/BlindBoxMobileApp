@@ -1,9 +1,9 @@
 package com.vidz.domain.model
 
 
-data class TransactionDto(
+data class Transaction(
     val transactionId: Long = 0L,
-    val account: AccountDto = AccountDto(),
+    val account: Account = Account(),
     val type: TransactionType = TransactionType.Deposit,
     val paymentMethod: PaymentMethod = PaymentMethod.InternalWallet,
     val createdAt: String = "",

@@ -1,12 +1,12 @@
 package com.vidz.domain.model
 
-data class SlotDto(
+data class Slot(
     val slotId: Long = 0L,
     val position: Int = 0,
     val state: SlotState = SlotState.Available,
     val isVisible: Boolean = true,
     val openedAt: String = "",
-    val toy: ToyDto? = null,
+    val toy: Toy = Toy(),
     val setId: Long = 0L,
     val createdAt: String = "",
     val updatedAt: String = "",

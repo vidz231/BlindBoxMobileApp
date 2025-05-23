@@ -8,7 +8,7 @@ data class PromotionalCampaign(
     val endDate: String = "",
     val discountRate: Double = 0.0,
     val isVisible: Boolean = true,
-    val blindBoxCampaigns: List<BlindBoxCampaignDto> = emptyList(),
+    val blindBoxCampaigns: List<BlindBoxCampaign> = emptyList(),
     val createdAt: String = "",
     val updatedAt: String = ""
 ) 

@@ -1,6 +1,6 @@
 package com.vidz.domain.model
 
-data class ToyDto(
+data class Toy(
     val toyId: Long = 0L,
     val name: String = "",
     val description: String = "",

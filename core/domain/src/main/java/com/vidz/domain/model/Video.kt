@@ -3,7 +3,7 @@ package com.vidz.domain.model
 
 data class Video(
     val videoId: Long = 0L,
-    val account: AccountDto? = null,
+    val account: Account = Account(),
     val slotId: Long = 0L,
     val url: String = "",
     val description: String = "",

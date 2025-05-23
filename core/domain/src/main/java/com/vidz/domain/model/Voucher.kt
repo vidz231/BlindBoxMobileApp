@@ -1,9 +1,9 @@
 package com.vidz.domain.model
 
-data class VoucherDto(
+data class Voucher(
     val voucherId: Long = 0L,
-    val orderId: Long? = null,
-    val account: AccountDto = AccountDto(),
+    val orderId: Long = 0L,
+    val account: Account = Account(),
     val code: String = "",
     val discountRate: Double = 0.0,
     val limitAmount: Double = 0.0,

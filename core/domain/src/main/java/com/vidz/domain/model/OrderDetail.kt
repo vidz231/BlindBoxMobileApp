@@ -9,7 +9,7 @@ data class OrderDetail(
     val unitPrice: Double = 0.0,
     val subTotal: Double = 0.0,
     val finalTotal: Double = 0.0,
-    val slot: SlotDto? = null,
+    val slot: Slot = Slot(),
     val createdAt: String = "",
     val updatedAt: String = ""
 ) 

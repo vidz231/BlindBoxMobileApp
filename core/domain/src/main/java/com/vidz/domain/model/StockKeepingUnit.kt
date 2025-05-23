@@ -7,7 +7,7 @@ data class StockKeepingUnit(
     val price: Double = 0.0,
     val stock: Int = 0,
     val specCount: Int = 0,
-    val blindBox: BlindBoxDto = BlindBoxDto(),
+    val blindBox: BlindBox = BlindBox(),
     val createdAt: String = "",
     val updatedAt: String = "",
     val isVisible: Boolean = true

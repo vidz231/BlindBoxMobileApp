@@ -2,12 +2,12 @@ package com.vidz.domain.model
 
 data class OrderDto(
     val orderId: Long = 0L,
-    val account: AccountDto = AccountDto(),
+    val account: Account = Account(),
     val orderStatusHistories: List<OrderStatusHistory> = emptyList(),
     val latestStatus: OrderStatus = OrderStatus.Created,
     val orderDetails: List<OrderDetail> = emptyList(),
-    val transaction: TransactionDto? = null,
-    val voucher: VoucherDto? = null,
+    val transaction: Transaction = Transaction(),
+    val voucher: Voucher = Voucher(),
     val shippingInfo: ShippingInfo = ShippingInfo(),
     val createdAt: String = "",
     val updatedAt: String = "",
