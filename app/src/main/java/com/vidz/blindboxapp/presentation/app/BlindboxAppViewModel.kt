@@ -25,15 +25,19 @@ class BlindboxAppViewModel @Inject constructor() : BaseViewModel<
 
 
     data class BlindBoxViewState(
-        val shouldShowBottomBar: Boolean = true
+        val shouldShowBottomBar: Boolean = true,
+        val currentNavIndex: Int = 0
     ) : ViewState()
 
     data class BlindBoxViewModelState(
-        val shouldShowBottomBar: Boolean = true
+        val shouldShowBottomBar: Boolean = true,
+        val currentNavIndex: Int = 0
+
     ) : ViewModelState() {
         override fun toUiState(): ViewState {
             return BlindBoxViewState(
-                shouldShowBottomBar = shouldShowBottomBar
+                shouldShowBottomBar = shouldShowBottomBar,
+                 currentNavIndex = currentNavIndex
             )
         }
     }
@@ -51,16 +55,19 @@ class BlindboxAppViewModel @Inject constructor() : BaseViewModel<
             DestinationRoutes.HOME_SCREEN_ROUTE,
             DestinationRoutes.SEARCH_SCREEN_ROUTE,
             DestinationRoutes.CART_SCREEN_ROUTE,
-//            DestinationRoutes.SETTING_SCREEN_ROUTE,
+            DestinationRoutes.SETTING_SCREEN_ROUTE,
             DestinationRoutes.ORDER_SCREEN_ROUTE,
         )
+
 
         val shouldShowBottomBar = currentDestination?.route?.let { route ->
             route in allowShowBottomBar
         } == true
         viewModelState.update {
             it.copy(
-                shouldShowBottomBar = shouldShowBottomBar
+                shouldShowBottomBar = shouldShowBottomBar,
+                currentNavIndex = allowShowBottomBar.indexOf(currentDestination?.route)
+                    .takeIf { it >= 0 } ?: 0
             )
         }
     }

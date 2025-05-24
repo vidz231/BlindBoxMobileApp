@@ -14,11 +14,3 @@ data class BlindBoxDto(
     val createdAt: String = "",
     val updatedAt: String = ""
 )
-
-data class BlindBoxCampaignDto(
-    val blindBoxId: Long = 0L,
-    val promotionalCampaignId: Long = 0L,
-    val createdAt: String = "",
-    val updatedAt: String = "",
-    val isVisible: Boolean = true
-) 

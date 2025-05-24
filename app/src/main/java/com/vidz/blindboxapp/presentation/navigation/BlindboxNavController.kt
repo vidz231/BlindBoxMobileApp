@@ -31,7 +31,7 @@ class BlindboxNavController(val navController: NavHostController) {
 
     fun navigateToNavigationBar(
         route: String,
-        numberItemOfPage: String
+        numberItemOfPage: String= "10"
     ) {
         when (route) {
             HOME_SCREEN_ROUTE -> {

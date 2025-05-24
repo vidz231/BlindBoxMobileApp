@@ -1,14 +1,11 @@
 package com.vidz.data.server.retrofit.dto
 
-
 data class VideoDto(
     val videoId: Long = 0L,
-    val account: AccountDto? = null,
-    val slotId: Long = 0L,
-    val url: String = "",
-    val description: String = "",
+    val videoUrl: String = "",
+    val slotId: Int? = null,
+    val uploader: AccountDto? = null,
     val isVisible: Boolean = true,
     val createdAt: String = "",
-    val updatedAt: String = "",
-    val isVerified: Boolean = false
+    val updatedAt: String = ""
 ) 

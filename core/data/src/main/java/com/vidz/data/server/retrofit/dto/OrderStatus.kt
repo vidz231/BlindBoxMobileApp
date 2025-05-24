@@ -1,0 +1,14 @@
+package com.vidz.data.server.retrofit.dto
+
+enum class OrderStatus(val value: String) {
+    CREATED("CREATED"),
+    PREPARING("PREPARING"),
+    PAYMENT_FAILED("PAYMENT_FAILED"),
+    PAYMENT_EXPIRED("PAYMENT_EXPIRED"),
+    CANCELED("CANCELED"),
+    READY_FOR_PICKUP("READY_FOR_PICKUP"),
+    SHIPPING("SHIPPING"),
+    DELIVERED("DELIVERED"),
+    RECEIVED("RECEIVED"),
+    COMPLETED("COMPLETED")
+} 

@@ -7,7 +7,6 @@ import com.vidz.domain.model.Slot
 class OrderDetailMapper(
     private val stockKeepingUnitMapper: StockKeepingUnitMapper,
     private val promotionalCampaignMapper: PromotionalCampaignMapper,
-    private val slotMapper: SlotMapper
 ) : BaseRemoteMapper<OrderDetail, OrderDetailDto> {
 
     override fun toDomain(external: OrderDetailDto): OrderDetail {
@@ -22,7 +21,6 @@ class OrderDetailMapper(
             unitPrice = external.unitPrice,
             subTotal = external.subTotal,
             finalTotal = external.finalTotal,
-            slot = external.slot?.let { slotMapper.toDomain(it) } ?: Slot(),
             createdAt = external.createdAt,
             updatedAt = external.updatedAt
         )
@@ -40,7 +38,6 @@ class OrderDetailMapper(
             unitPrice = domain.unitPrice,
             subTotal = domain.subTotal,
             finalTotal = domain.finalTotal,
-            slot = slotMapper.toRemote(domain.slot),
             createdAt = domain.createdAt,
             updatedAt = domain.updatedAt
         )

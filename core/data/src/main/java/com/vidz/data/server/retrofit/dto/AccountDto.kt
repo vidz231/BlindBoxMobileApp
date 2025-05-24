@@ -1,24 +1,26 @@
 package com.vidz.data.server.retrofit.dto
 
+import java.math.BigDecimal
 
 data class AccountDto(
     val accountId: Long = 0L,
-    val email: String = "",
     val firstName: String = "",
     val lastName: String = "",
-    val password: String? = null,
-    val avatarUrl: String? = null,
-    val balance: Double = 0.0,
-    val updateBalanceAt: String? = null,
-    val role: AccountRole = AccountRole.CUSTOMER,
+    val email: String = "",
+    val password: String = "",
+    val avatarUrl: String = "",
+    val role: RoleEnum = RoleEnum.USER,
+    val balance: BigDecimal = BigDecimal.ZERO,
+    val updateBalanceAt: String = "",
     val isVerified: Boolean = false,
-    val verifiedAt: String? = null,
+    val verifiedAt: String = "",
     val isVisible: Boolean = true,
+    val defaultShippingInfo: ShippingInfoDto? = null,
     val createdAt: String = "",
-    val updatedAt: String = "",
-    val defaultShippingInfo: ShippingInfoDto? = null
+    val updatedAt: String = ""
 )
 
-enum class AccountRole {
-    ADMIN, STAFF, CUSTOMER
+enum class RoleEnum(val value: String) {
+    ADMIN("ADMIN"),
+    USER("USER")
 }

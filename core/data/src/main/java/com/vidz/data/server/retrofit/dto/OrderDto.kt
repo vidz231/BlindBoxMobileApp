@@ -15,15 +15,8 @@ data class OrderDto(
     val finalTotal: Double = 0.0
 )
 
-enum class OrderStatus {
-    CREATED,
-    PREPARING,
-    PAYMENT_FAILED,
-    PAYMENT_EXPIRED,
-    CANCELED,
-    READY_FOR_PICKUP,
-    SHIPPING,
-    DELIVERED,
-    RECEIVED,
-    COMPLETED
-} 
+data class PlaceOrderSuccessResponse(
+    val paymentRedirectUrl: String = "",
+    val orderDto: OrderDto = OrderDto()
+)
+

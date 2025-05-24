@@ -1,18 +1,26 @@
 package com.vidz.data.server.retrofit.dto
 
+import java.math.BigDecimal
+
 data class VoucherDto(
     val voucherId: Long = 0L,
-    val orderId: Long? = null,
-    val account: AccountDto = AccountDto(),
     val code: String = "",
-    val discountRate: Double = 0.0,
-    val limitAmount: Double = 0.0,
-    val state: VoucherState = VoucherState.AVAILABLE,
+    val name: String = "",
+    val description: String = "",
+    val discountType: DiscountTypeEnum = DiscountTypeEnum.PERCENTAGE,
+    val discountValue: BigDecimal = BigDecimal.ZERO,
+    val minimumOrderValue: BigDecimal? = null,
+    val maximumDiscount: BigDecimal? = null,
+    val usageLimit: Int? = null,
+    val usedCount: Int = 0,
+    val startDate: String = "",
+    val endDate: String = "",
+    val isVisible: Boolean = true,
     val createdAt: String = "",
-    val updatedAt: String = "",
-    val expiredAt: String = ""
+    val updatedAt: String = ""
 )
 
-enum class VoucherState {
-    USED, AVAILABLE, RESERVED, EXPIRED
+enum class DiscountTypeEnum(val value: String) {
+    PERCENTAGE("PERCENTAGE"),
+    FIXED_AMOUNT("FIXED_AMOUNT")
 } 

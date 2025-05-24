@@ -1,10 +1,11 @@
 package com.vidz.data.mapper
 
 import com.vidz.data.server.retrofit.dto.AccountDto
-import com.vidz.data.server.retrofit.dto.AccountRole as DtoAccountRole
+import com.vidz.data.server.retrofit.dto.RoleEnum
 import com.vidz.domain.model.Account
 import com.vidz.domain.model.AccountRole
 import com.vidz.domain.model.ShippingInfo
+import java.math.BigDecimal
 
 class AccountMapper(
     private val shippingInfoMapper: ShippingInfoMapper
@@ -16,13 +17,13 @@ class AccountMapper(
             email = external.email,
             firstName = external.firstName,
             lastName = external.lastName,
-            password = external.password ?: "",
-            avatarUrl = external.avatarUrl ?: "",
-            balance = external.balance,
-            updateBalanceAt = external.updateBalanceAt ?: "",
+            password = external.password,
+            avatarUrl = external.avatarUrl,
+            balance = external.balance.toFloat().toDouble(),
+            updateBalanceAt = external.updateBalanceAt,
             role = mapAccountRoleToDomain(external.role),
             isVerified = external.isVerified,
-            verifiedAt = external.verifiedAt ?: "",
+            verifiedAt = external.verifiedAt,
             isVisible = external.isVisible,
             createdAt = external.createdAt,
             updatedAt = external.updatedAt,
@@ -38,13 +39,17 @@ class AccountMapper(
             email = domain.email,
             firstName = domain.firstName,
             lastName = domain.lastName,
-            password = domain.password.takeIf { it.isNotEmpty() },
-            avatarUrl = domain.avatarUrl.takeIf { it.isNotEmpty() },
-            balance = domain.balance,
-            updateBalanceAt = domain.updateBalanceAt.takeIf { it.isNotEmpty() },
+            password = domain.password.takeIf { it.isNotEmpty() }
+                    .toString(),
+            avatarUrl = domain.avatarUrl.takeIf { it.isNotEmpty() }
+                    .toString(),
+            balance = BigDecimal.valueOf(domain.balance),
+            updateBalanceAt = domain.updateBalanceAt.takeIf { it.isNotEmpty() }
+                    .toString(),
             role = mapAccountRoleToDto(domain.role),
             isVerified = domain.isVerified,
-            verifiedAt = domain.verifiedAt.takeIf { it.isNotEmpty() },
+            verifiedAt = domain.verifiedAt.takeIf { it.isNotEmpty() }
+                    .toString(),
             isVisible = domain.isVisible,
             createdAt = domain.createdAt,
             updatedAt = domain.updatedAt,
@@ -52,19 +57,18 @@ class AccountMapper(
         )
     }
 
-    private fun mapAccountRoleToDomain(dtoRole: DtoAccountRole): AccountRole {
+    private fun mapAccountRoleToDomain(dtoRole: RoleEnum): AccountRole {
         return when (dtoRole) {
-            DtoAccountRole.ADMIN -> AccountRole.Admin
-            DtoAccountRole.STAFF -> AccountRole.Staff
-            DtoAccountRole.CUSTOMER -> AccountRole.Customer
+            RoleEnum.ADMIN -> AccountRole.Admin
+            RoleEnum.USER -> AccountRole.Staff
         }
     }
 
-    private fun mapAccountRoleToDto(domainRole: AccountRole): DtoAccountRole {
+    private fun mapAccountRoleToDto(domainRole: AccountRole): RoleEnum {
         return when (domainRole) {
-            AccountRole.Admin -> DtoAccountRole.ADMIN
-            AccountRole.Staff -> DtoAccountRole.STAFF
-            AccountRole.Customer -> DtoAccountRole.CUSTOMER
+            AccountRole.Admin -> RoleEnum.ADMIN
+            AccountRole.Staff -> RoleEnum.USER
+            AccountRole.Customer -> RoleEnum.USER
         }
     }
 } 

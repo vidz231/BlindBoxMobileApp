@@ -1,57 +1,103 @@
 package com.vidz.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import com.vidz.domain.model.BlindBox
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+/**
+ * Created by FPL on 08/01/2025.
+ */
+
+
+// - primary: The main theme color, typically representing the brand identity.
+// - onPrimary: The color of content displayed on the primary color (e.g., text, icons).
+// - secondary: A supplementary color used for secondary UI elements or highlights.
+// - onSecondary: The color of content displayed on the secondary color.
+// - background: The primary background color of the app in Dark Mode.
+// - onBackground: The color of content displayed on the background (e.g., text, icons).
+// - surface: The background color for UI components like cards, dialogs, and app bars.
+// - surfaceTint: Used to add a tint to components layered on the surface color.
+// - onSurface: The color of content displayed on the surface color.
+
+private val LightColors = lightColorScheme(
+    primary = LightPrimaryColor,
+    onPrimary = LightOnPrimaryColor,
+    primaryContainer = LightPrimaryContainerColor,
+    onPrimaryContainer = LightOnPrimaryContainerColor,
+    secondary = LightSecondaryColor,
+    onSecondary = LightOnSecondaryColor,
+    secondaryContainer = LightSecondaryContainerColor,
+    onSecondaryContainer = LightOnSecondaryContainerColor,
+    tertiary = LightTertiaryColor,
+    onTertiary = LightOnTertiaryColor,
+    tertiaryContainer = LightTertiaryContainerColor,
+    onTertiaryContainer = LightOnTertiaryContainerColor,
+    error = LightErrorColor,
+    onError = LightOnErrorColor,
+    errorContainer = LightErrorContainerColor,
+    onErrorContainer = LightOnErrorContainerColor,
+    inverseSurface = LightInverseSurfaceColor,
+    inverseOnSurface = LightOnInverseSurfaceColor,
+    inversePrimary = LightInversePrimaryColor,
+    outline = LightOutlineColor,
+    outlineVariant = LightOutlineVariantColor,
+    surface = LightSurfaceColor,
+    surfaceDim = LightSurfaceDimColor,
+    surfaceBright = LightSurfaceBrightColor,
+    surfaceContainer = LightSurfaceContainerColor,
+    surfaceContainerHigh = LightSurfaceContainerHighColor,
+    onSurface = LightOnSurfaceColor,
+    onSurfaceVariant = LightOnSurfaceVariantColor,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColors = darkColorScheme(
+    primary = DarkPrimaryColor,
+    onPrimary = DarkOnPrimaryColor,
+    primaryContainer = DarkPrimaryContainerColor,
+    onPrimaryContainer = DarkOnPrimaryContainerColor,
+    secondary = DarkSecondaryColor,
+    onSecondary = DarkOnSecondaryColor,
+    secondaryContainer = DarkSecondaryContainerColor,
+    onSecondaryContainer = DarkOnSecondaryContainerColor,
+    tertiary = DarkTertiaryColor,
+    onTertiary = DarkOnTertiaryColor,
+    tertiaryContainer = DarkTertiaryContainerColor,
+    onTertiaryContainer = DarkOnTertiaryContainerColor,
+    error = DarkErrorColor,
+    onError = DarkOnErrorColor,
+    errorContainer = DarkErrorContainerColor,
+    onErrorContainer = DarkOnErrorContainerColor,
+    inverseSurface = DarkInverseSurfaceColor,
+    inverseOnSurface = DarkOnInverseSurfaceColor,
+    inversePrimary = DarkInversePrimaryColor,
+    outline = DarkOutlineColor,
+    outlineVariant = DarkOutlineVariantColor,
+    surface = DarkSurfaceColor,
+    surfaceDim = DarkSurfaceDimColor,
+    surfaceBright = DarkSurfaceBrightColor,
+    surfaceContainer = DarkSurfaceContainerColor,
+    surfaceContainerHigh = DarkSurfaceContainerHighColor,
+    onSurface = DarkOnSurfaceColor,
+    onSurfaceVariant = DarkOnSurfaceVariantColor,
 )
 
 @Composable
-fun BlindBoxAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+fun BlindBoxTheme(
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val colors = if (darkTheme) {
+        DarkColors
+    } else {
+        LightColors
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colors,
+        content = content,
         typography = Typography,
-        content = content
     )
 }

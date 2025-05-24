@@ -19,21 +19,8 @@ interface BlindBoxApi {
         @Path("blindBoxId") blindBoxId: Long
     ): Response<BlindBoxDto>
 
-    @POST("blind-boxes")
-    suspend fun createBlindBox(
-        @Body createRequest: CreateBlindBoxRequest
-    ): Response<BlindBoxDto>
 
-    @PUT("blind-boxes/{blindBoxId}")
-    suspend fun updateBlindBox(
-        @Path("blindBoxId") blindBoxId: Long,
-        @Body updateRequest: UpdateBlindBoxRequest
-    ): Response<BlindBoxDto>
 
-    @DELETE("blind-boxes/{blindBoxId}")
-    suspend fun deleteBlindBox(
-        @Path("blindBoxId") blindBoxId: Long
-    ): Response<Unit>
 }
 
 // Request DTOs

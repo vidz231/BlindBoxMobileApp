@@ -12,7 +12,6 @@ class OrderMapper(
     private val orderStatusHistoryMapper: OrderStatusHistoryMapper,
     private val orderDetailMapper: OrderDetailMapper,
     private val transactionMapper: TransactionMapper,
-    private val voucherMapper: VoucherMapper,
     private val shippingInfoMapper: ShippingInfoMapper
 ) : BaseRemoteMapper<Order, OrderDto> {
 
@@ -26,7 +25,6 @@ class OrderMapper(
             latestStatus = mapOrderStatusToDomain(external.latestStatus),
             orderDetails = external.orderDetails.map { orderDetailMapper.toDomain(it) },
             transaction = external.transaction?.let { transactionMapper.toDomain(it) } ?: Transaction(),
-            voucher = external.voucher?.let { voucherMapper.toDomain(it) } ?: Voucher(),
             shippingInfo = shippingInfoMapper.toDomain(external.shippingInfo),
             createdAt = external.createdAt,
             updatedAt = external.updatedAt,
@@ -45,7 +43,6 @@ class OrderMapper(
             latestStatus = mapOrderStatusToDto(domain.latestStatus),
             orderDetails = domain.orderDetails.map { orderDetailMapper.toRemote(it) },
             transaction = transactionMapper.toRemote(domain.transaction),
-            voucher = voucherMapper.toRemote(domain.voucher),
             shippingInfo = shippingInfoMapper.toRemote(domain.shippingInfo),
             createdAt = domain.createdAt,
             updatedAt = domain.updatedAt,

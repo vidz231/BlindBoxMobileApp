@@ -19,21 +19,6 @@ interface ToyApi {
         @Path("toyId") toyId: Long
     ): Response<ToyDto>
 
-    @POST("toys")
-    suspend fun createToy(
-        @Body createRequest: CreateToyRequest
-    ): Response<ToyDto>
-
-    @PUT("toys/{toyId}")
-    suspend fun updateToy(
-        @Path("toyId") toyId: Long,
-        @Body updateRequest: UpdateToyRequest
-    ): Response<ToyDto>
-
-    @DELETE("toys/{toyId}")
-    suspend fun deleteToy(
-        @Path("toyId") toyId: Long
-    ): Response<Unit>
 }
 
 // Request DTOs

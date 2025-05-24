@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.vidz.blindboxapp.presentation.app.BlindBoxApp
-import com.vidz.theme.BlindBoxAppTheme
+import com.vidz.theme.BlindBoxTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,7 +41,7 @@ fun Greeting(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    BlindBoxAppTheme {
+    BlindBoxTheme {
         Greeting("Android")
     }
 }
