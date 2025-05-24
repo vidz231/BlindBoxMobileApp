@@ -4,8 +4,11 @@ import com.vidz.data.server.retrofit.dto.BlindBoxDto
 import com.vidz.data.server.retrofit.dto.BlindBoxCampaignDto
 import com.vidz.domain.model.BlindBox
 import com.vidz.domain.model.BlindBoxCampaign
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class BlindBoxMapper(
+@Singleton
+class BlindBoxMapper @Inject constructor(
     private val brandMapper: BrandMapper,
     private val imageMapper: ImageMapper,
     private val toyMapper: ToyMapper,

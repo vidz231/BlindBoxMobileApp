@@ -3,8 +3,11 @@ package com.vidz.data.mapper
 import com.vidz.data.server.retrofit.dto.ImageDto
 import com.vidz.domain.model.Image
 import com.vidz.domain.model.Account
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ImageMapper(
+@Singleton
+class ImageMapper @Inject constructor(
     private val accountMapper: AccountMapper
 ) : BaseRemoteMapper<Image, ImageDto> {
 

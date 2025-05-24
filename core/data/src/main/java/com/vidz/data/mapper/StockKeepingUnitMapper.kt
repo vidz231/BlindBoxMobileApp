@@ -4,8 +4,11 @@ import com.vidz.data.server.retrofit.dto.StockKeepingUnitDto
 import com.vidz.domain.model.StockKeepingUnit
 import com.vidz.domain.model.Image
 import com.vidz.domain.model.BlindBox
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class StockKeepingUnitMapper(
+@Singleton
+class StockKeepingUnitMapper @Inject constructor(
     private val imageMapper: ImageMapper
 ) : BaseRemoteMapper<StockKeepingUnit, StockKeepingUnitDto> {
 

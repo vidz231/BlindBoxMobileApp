@@ -1,11 +1,13 @@
 package com.vidz.data.di
 
 import com.vidz.data.repository.AuthRepositoryImpl
+import com.vidz.data.repository.BlindBoxRepositoryImpl
 import com.vidz.data.repository.NotificationRepositoryImpl
 import com.vidz.data.repository.OrderRepositoryImpl
 import com.vidz.data.repository.SkuRepositoryImpl
 import com.vidz.data.repository.AppConfigRepositoryImpl
 import com.vidz.domain.repository.AuthRepository
+import com.vidz.domain.repository.BlindBoxRepository
 import com.vidz.domain.repository.NotificationRepository
 import com.vidz.domain.repository.OrderRepository
 import com.vidz.domain.repository.SkuRepository
@@ -49,4 +51,11 @@ abstract class RepositoryModule {
     abstract fun bindAppConfigRepository(
         appConfigRepositoryImpl: AppConfigRepositoryImpl
     ): AppConfigRepository
-} 
+
+    @Binds
+    @Singleton
+    abstract fun bindBlindBoxRepository(
+        blindBoxRepositoryImpl: BlindBoxRepositoryImpl
+    ): BlindBoxRepository
+}
+

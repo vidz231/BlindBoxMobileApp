@@ -1,7 +1,7 @@
 package com.vidz.data.server.retrofit.dto
 
-import java.math.BigDecimal
-
+import com.squareup.moshi.JsonClass
+@JsonClass(generateAdapter = true)
 data class AccountDto(
     val accountId: Long = 0L,
     val firstName: String = "",
@@ -10,7 +10,7 @@ data class AccountDto(
     val password: String = "",
     val avatarUrl: String = "",
     val role: RoleEnum = RoleEnum.USER,
-    val balance: BigDecimal = BigDecimal.ZERO,
+    val balance: Double = 0.0,
     val updateBalanceAt: String = "",
     val isVerified: Boolean = false,
     val verifiedAt: String = "",

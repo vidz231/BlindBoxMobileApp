@@ -1,5 +1,8 @@
 package com.vidz.data.server.retrofit.api
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 // Common response DTOs used across multiple APIs
 data class PagedResponse<T>(
     val content: List<T> = emptyList(),
@@ -11,6 +14,7 @@ data class PagedResponse<T>(
     val last: Boolean = true
 )
 
+@JsonClass(generateAdapter = true)
 data class ApiResponse<T>(
     val success: Boolean = true,
     val message: String = "",
@@ -18,6 +22,7 @@ data class ApiResponse<T>(
     val errorCode: String? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class ErrorResponse(
     val error: String = "",
     val message: String = "",

@@ -1,6 +1,7 @@
 package com.vidz.data.di
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.vidz.blindbox.core.data.BuildConfig
 // Removed direct API imports as RetrofitServer will provide them
 import dagger.Module
@@ -22,6 +23,7 @@ class NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor
     ): Retrofit {
         val moshi = Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
                 .build()
         return Retrofit.Builder()
                 .client(

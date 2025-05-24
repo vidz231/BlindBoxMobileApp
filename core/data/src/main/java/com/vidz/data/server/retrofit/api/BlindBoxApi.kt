@@ -19,8 +19,6 @@ interface BlindBoxApi {
         @Path("blindBoxId") blindBoxId: Long
     ): Response<BlindBoxDto>
 
-
-
 }
 
 // Request DTOs

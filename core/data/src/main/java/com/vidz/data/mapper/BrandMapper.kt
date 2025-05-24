@@ -2,8 +2,11 @@ package com.vidz.data.mapper
 
 import com.vidz.data.server.retrofit.dto.BrandDto
 import com.vidz.domain.model.Brand
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class BrandMapper : BaseRemoteMapper<Brand, BrandDto> {
+@Singleton
+class BrandMapper @Inject constructor() : BaseRemoteMapper<Brand, BrandDto> {
 
     override fun toDomain(external: BrandDto): Brand {
         return Brand(

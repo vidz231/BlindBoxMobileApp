@@ -67,6 +67,7 @@ android {
 
 dependencies {
     implementation(projects.feature.home)
+    implementation(projects.feature.auth)
     implementation( projects.feature.search)
     implementation(projects.feature.setting)
     implementation(projects.feature.cart)

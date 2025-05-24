@@ -4,8 +4,11 @@ import com.vidz.data.server.retrofit.dto.ToyDto
 import com.vidz.data.server.retrofit.dto.ToyRarity as DtoToyRarity
 import com.vidz.domain.model.Toy
 import com.vidz.domain.model.ToyRarity
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ToyMapper(
+@Singleton
+class ToyMapper @Inject constructor(
     private val imageMapper: ImageMapper
 ) : BaseRemoteMapper<Toy, ToyDto> {
 

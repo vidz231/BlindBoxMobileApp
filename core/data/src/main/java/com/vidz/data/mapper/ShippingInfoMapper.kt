@@ -2,8 +2,13 @@ package com.vidz.data.mapper
 
 import com.vidz.data.server.retrofit.dto.ShippingInfoDto
 import com.vidz.domain.model.ShippingInfo
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ShippingInfoMapper : BaseRemoteMapper<ShippingInfo, ShippingInfoDto> {
+@Singleton
+class ShippingInfoMapper
+    @Inject constructor()
+    : BaseRemoteMapper<ShippingInfo, ShippingInfoDto> {
 
     override fun toDomain(external: ShippingInfoDto): ShippingInfo {
         return ShippingInfo(

@@ -5,9 +5,11 @@ import com.vidz.data.server.retrofit.dto.RoleEnum
 import com.vidz.domain.model.Account
 import com.vidz.domain.model.AccountRole
 import com.vidz.domain.model.ShippingInfo
-import java.math.BigDecimal
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AccountMapper(
+@Singleton
+class AccountMapper @Inject constructor(
     private val shippingInfoMapper: ShippingInfoMapper
 ) : BaseRemoteMapper<Account, AccountDto> {
 
@@ -43,7 +45,7 @@ class AccountMapper(
                     .toString(),
             avatarUrl = domain.avatarUrl.takeIf { it.isNotEmpty() }
                     .toString(),
-            balance = BigDecimal.valueOf(domain.balance),
+            balance = domain.balance,
             updateBalanceAt = domain.updateBalanceAt.takeIf { it.isNotEmpty() }
                     .toString(),
             role = mapAccountRoleToDto(domain.role),

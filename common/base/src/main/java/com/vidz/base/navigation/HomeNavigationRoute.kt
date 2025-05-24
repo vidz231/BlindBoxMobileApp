@@ -3,8 +3,6 @@ package com.vidz.base.navigation
 object DestinationRoutes {
     const val ROOT_HOME_SCREEN_ROUTE = "root_home_screen_route"
     const val ROOT_LOGIN_SCREEN_ROUTE = "root_login_screen_route"
-
-
     const val HOME_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/home"
     const val CART_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/cart"
     const val SEARCH_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/search"

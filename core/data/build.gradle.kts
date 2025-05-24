@@ -22,7 +22,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://40.87.80.54:8080/\""
+                "\"http://40.87.80.54:8080/api/v1/\""
             )
         }
         release {
@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.converter.gson)
     implementation (libs.moshi.kotlin)
+    ksp (libs.moshi.kotlin.codegen)
 
 
 
