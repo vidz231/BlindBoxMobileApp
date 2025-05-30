@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.blindbox.android.library)
     alias(libs.plugins.blindbox.android.library.jacoco)
     alias(libs.plugins.blindbox.hilt)
+    alias(libs.plugins.blindbox.android.room)
     id("kotlinx-serialization")
 }
 

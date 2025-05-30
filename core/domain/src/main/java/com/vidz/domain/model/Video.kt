@@ -1,6 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Video(
     val videoId: Long = 0L,
     val account: Account = Account(),

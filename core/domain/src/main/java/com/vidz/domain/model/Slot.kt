@@ -1,5 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Slot(
     val slotId: Long = 0L,
     val position: Int = 0,
@@ -13,8 +16,12 @@ data class Slot(
     val video: Video = Video()
 )
 
+@Serializable
 sealed class SlotState {
+    @Serializable
     data object Opened : SlotState()
+    @Serializable
     data object Available : SlotState()
+    @Serializable
     data object Reserved : SlotState()
 } 
