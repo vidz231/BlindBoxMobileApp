@@ -120,6 +120,22 @@ fun DetailScreen(
         derivedStateOf { displayData.skus.getOrNull(selectedSkuIndex) }
     }
     
+    // Handle add to cart success/error states
+    LaunchedEffect(uiState.addToCartSuccess, uiState.addToCartError) {
+        when {
+            uiState.addToCartSuccess -> {
+                selectedSku?.let { sku ->
+                    onShowSnackbar("✓ ${sku.name} added to cart!")
+                }
+                detailViewModel.clearAddToCartState()
+            }
+            uiState.addToCartError != null -> {
+                onShowSnackbar("❌ ${uiState.addToCartError}")
+                detailViewModel.clearAddToCartState()
+            }
+        }
+    }
+    
     // Load data only once
     LaunchedEffect(blindBoxId) {
         if (blindBoxId > 0 && currentBlindBox == null) {
@@ -135,7 +151,13 @@ fun DetailScreen(
     val onSkuSelect = { index: Int -> selectedSkuIndex = index }
     val onAddToCart = { 
         selectedSku?.let { sku ->
-            onShowSnackbar("${sku.name} added to cart!")
+            detailViewModel.onTriggerEvent(
+                DetailViewModel.DetailViewEvent.AddToCart(
+                    sku = sku,
+                    quantity = 1,
+                    slot = null // For now, no slot selection. Can be extended later
+                )
+            )
         }
     }
     val onBuyNow = {
@@ -160,6 +182,7 @@ fun DetailScreen(
             if (displayData.skus.isNotEmpty() && selectedSku != null) {
                 DetailBottomBar(
                     selectedSku = selectedSku!!,
+                    isAddingToCart = uiState.isAddingToCart,
                     onAddToCart = { onAddToCart.invoke() },
                     onBuyNow = { onBuyNow.invoke() }
                 )
@@ -697,6 +720,7 @@ private fun CleanDescriptionSection(description: String) {
 @Composable
 private fun DetailBottomBar(
     selectedSku: StockKeepingUnit,
+    isAddingToCart: Boolean,
     onAddToCart: () -> Unit,
     onBuyNow: () -> Unit
 ) {
@@ -732,15 +756,28 @@ private fun DetailBottomBar(
             OutlinedButton(
                 onClick = onAddToCart,
                 modifier = Modifier.weight(1f),
-                enabled = selectedSku.stock > 0
+                enabled = selectedSku.stock > 0 && !isAddingToCart
             ) {
-                Text("Add to Cart")
+                if (isAddingToCart) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Text("Adding...")
+                    }
+                } else {
+                    Text("Add to Cart")
+                }
             }
             
             Button(
                 onClick = onBuyNow,
                 modifier = Modifier.weight(1f),
-                enabled = selectedSku.stock > 0,
+                enabled = selectedSku.stock > 0 && !isAddingToCart,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
