@@ -39,9 +39,9 @@ class AuthRepositoryImpl @Inject constructor(
             },
             convert = { loginResponse ->
                 LoginResult(
-                    accessToken = loginResponse.accessToken,
+                    accessToken = loginResponse.token,
                     refreshToken = loginResponse.refreshToken,
-                    account = accountMapper.toDomain(loginResponse.account)
+                    account = accountMapper.toDomain(loginResponse.accountResponseDTO)
                 )
             }
         ).execute()
@@ -50,14 +50,21 @@ class AuthRepositoryImpl @Inject constructor(
     override fun register(
         email: String,
         password: String,
+        confirmPassword: String,
         firstName: String,
         lastName: String
     ): Flow<Result<Account>> {
         return ServerFlow(
             getData = {
                 authApi.register(
-                    RegisterRequest(email, password, firstName, lastName)
-                ).body()!!
+                    RegisterRequest(email, password, confirmPassword, firstName, lastName)
+                )
+                // Since register API returns Unit, create AccountDto with available data
+                com.vidz.data.server.retrofit.dto.AccountDto(
+                    email = email,
+                    firstName = firstName,
+                    lastName = lastName
+                )
             },
             convert = { accountDto ->
                 accountMapper.toDomain(accountDto)
@@ -72,9 +79,9 @@ class AuthRepositoryImpl @Inject constructor(
             },
             convert = { loginResponse ->
                 LoginResult(
-                    accessToken = loginResponse.accessToken,
+                    accessToken = loginResponse.token,
                     refreshToken = loginResponse.refreshToken,
-                    account = accountMapper.toDomain(loginResponse.account)
+                    account = accountMapper.toDomain(loginResponse.accountResponseDTO)
                 )
             }
         ).execute()

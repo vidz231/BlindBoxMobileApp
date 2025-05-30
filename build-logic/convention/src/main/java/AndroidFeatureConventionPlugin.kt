@@ -36,18 +36,18 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                "implementation"(libs.findLibrary("androidx.compose.material3").get())
+                "implementation"(libs.findLibrary("androidx-compose-material3").get())
                 "implementation"(project(":core:domain"))
-                "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
-                "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
-                "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
-                "implementation"(libs.findLibrary("androidx.navigation.compose").get())
-                "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
-                "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
-
-                "testImplementation"(libs.findLibrary("androidx.navigation.testing").get())
+                "implementation"(libs.findLibrary("androidx-hilt-navigation-compose").get())
+                "implementation"(libs.findLibrary("androidx-lifecycle-runtimeCompose").get())
+                "implementation"(libs.findLibrary("androidx-lifecycle-viewModelCompose").get())
+                "implementation"(libs.findLibrary("androidx-navigation-compose").get())
+                "implementation"(libs.findLibrary("androidx-tracing-ktx").get())
+                "implementation"(libs.findLibrary("kotlinx-serialization-json").get())
+                "implementation"(libs.findLibrary("androidx-compose-material-iconsExtended").get())
+                "testImplementation"(libs.findLibrary("androidx-navigation-testing").get())
                 "androidTestImplementation"(
-                    libs.findLibrary("androidx.lifecycle.runtimeTesting").get(),
+                    libs.findLibrary("androidx-lifecycle-runtimeTesting").get(),
                 )
             }
         }

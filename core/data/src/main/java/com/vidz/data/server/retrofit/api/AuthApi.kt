@@ -18,7 +18,7 @@ interface AuthApi {
     @POST("auth/register")
     suspend fun register(
         @Body registerRequest: RegisterRequest
-    ): Response<AccountDto>
+    ): Response<Unit>
 
     @POST("auth/login-with-google")
     suspend fun loginWithGoogle(
@@ -53,6 +53,7 @@ data class LoginRequest(
 data class RegisterRequest(
     val email: String,
     val password: String,
+    val confirmPassword: String,
     val firstName: String,
     val lastName: String
 )
@@ -76,7 +77,7 @@ data class ResetPasswordRequest(
 
 // Response DTOs
 data class LoginResponse(
-    val accessToken: String,
+    val token: String,
     val refreshToken: String,
-    val account: AccountDto
+    val accountResponseDTO: AccountDto
 ) 
