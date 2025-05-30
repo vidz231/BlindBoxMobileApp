@@ -23,30 +23,51 @@ class AuthViewModel @Inject constructor(
 
     override fun onTriggerEvent(event: AuthViewEvent) {
         when (event) {
-            // Handle events here
-            else -> {}
+            is AuthViewEvent.ShowLoginScreen -> {
+                viewModelState.value = viewModelState.value.copy(
+                    currentScreen = AuthScreen.LOGIN
+                )
+            }
+            is AuthViewEvent.ShowRegisterScreen -> {
+                viewModelState.value = viewModelState.value.copy(
+                    currentScreen = AuthScreen.REGISTER
+                )
+            }
+            is AuthViewEvent.ShowForgotPasswordScreen -> {
+                viewModelState.value = viewModelState.value.copy(
+                    currentScreen = AuthScreen.FORGOT_PASSWORD
+                )
+            }
         }
     }
 
     data class AuthViewModelState(
         val isLoading: Boolean = false,
-        val error: String? = null
-        // Add other state properties here
+        val error: String? = null,
+        val currentScreen: AuthScreen = AuthScreen.LOGIN
     ) : ViewModelState() {
         override fun toUiState(): ViewState = AuthViewState(
             isLoading = isLoading,
-            error = error
-            // Map other properties here
+            error = error,
+            currentScreen = currentScreen
         )
     }
 
     data class AuthViewState(
         val isLoading: Boolean,
-        val error: String?
-        // Add other UI state properties here
+        val error: String?,
+        val currentScreen: AuthScreen
     ) : ViewState()
 
     sealed class AuthViewEvent : ViewEvent {
-        // Define events here
+        object ShowLoginScreen : AuthViewEvent()
+        object ShowRegisterScreen : AuthViewEvent()
+        object ShowForgotPasswordScreen : AuthViewEvent()
+    }
+
+    enum class AuthScreen {
+        LOGIN,
+        REGISTER,
+        FORGOT_PASSWORD
     }
 }

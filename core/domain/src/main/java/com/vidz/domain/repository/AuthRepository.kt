@@ -12,6 +12,7 @@ interface AuthRepository {
     fun register(
         email: String,
         password: String,
+        confirmPassword: String,
         firstName: String,
         lastName: String
     ): Flow<Result<Account>>

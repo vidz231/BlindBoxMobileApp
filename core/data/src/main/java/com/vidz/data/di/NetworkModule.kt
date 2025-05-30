@@ -8,10 +8,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -20,20 +22,23 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        @Named("AuthInterceptor") authInterceptor: Interceptor
     ): Retrofit {
         val moshi = Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())
-                .build()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+            
         return Retrofit.Builder()
-                .client(
-                    OkHttpClient.Builder()
-                        .addInterceptor(loggingInterceptor)
-                        .build()
-                )
-                .baseUrl(BuildConfig.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .build()
+            .client(client)
+            .baseUrl("http://40.87.80.54:8080/api/v1/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
     }
 
     @Provides

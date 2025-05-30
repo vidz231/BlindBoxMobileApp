@@ -1,9 +1,12 @@
 package com.vidz.data.mapper
 
 import com.vidz.data.server.retrofit.dto.RefreshTokenDto
-import com.vidz.domain.model.RefreshTokenDto as RefreshToken
+import com.vidz.domain.model.RefreshToken
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RefreshTokenMapper : BaseRemoteMapper<RefreshToken, RefreshTokenDto> {
+@Singleton
+class RefreshTokenMapper @Inject constructor() : BaseRemoteMapper<RefreshToken, RefreshTokenDto> {
 
     override fun toDomain(external: RefreshTokenDto): RefreshToken {
         return RefreshToken(

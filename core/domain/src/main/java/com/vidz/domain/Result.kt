@@ -10,5 +10,6 @@ sealed class ServerError(open val message: String) : Result<Nothing>(){
     data class RequiredLogin(override val message: String) : ServerError(message)
     data class RequiredVip(override val message: String) : ServerError(message)
     data class NotEnoughCredit(override val message: String) : ServerError(message)
+    data class Internet(override val message: String) : ServerError(message)
 }
 

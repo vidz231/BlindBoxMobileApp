@@ -130,7 +130,14 @@ fun BlindBoxApp(
                 }
             }
         ) { paddingvalue ->
-            AppNavHost(navController.navController)
+            AppNavHost(
+                navController = navController.navController,
+                onShowSnackbar = { message ->
+                    scope.launch {
+                        snackbarHostState.showSnackbar(message)
+                    }
+                }
+            )
         }
     }
 }
