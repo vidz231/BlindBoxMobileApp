@@ -1,0 +1,109 @@
+package com.vidz.datastore
+
+import com.vidz.domain.Result
+import com.vidz.domain.ServerError
+import com.vidz.domain.Success
+import com.vidz.domain.repository.TokenRefreshRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class TokenManager @Inject constructor(
+    private val tokenDataStore: TokenDataStore,
+    private val tokenRefreshRepository: TokenRefreshRepository
+) {
+    
+    // Mutex to prevent concurrent token refresh attempts
+    private val refreshMutex = Mutex()
+    private var isRefreshing = false
+
+    fun isAuthenticated(): Flow<Boolean> {
+        return tokenDataStore.getAccessToken().map { accessToken ->
+            !accessToken.isNullOrEmpty()
+        }
+    }
+
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        tokenDataStore.saveTokens(accessToken, refreshToken)
+    }
+
+    suspend fun getValidAccessToken(): Flow<Result<String>> = flow {
+        val accessToken = tokenDataStore.getAccessToken().first()
+        
+        if (accessToken.isNullOrEmpty()) {
+            emit(ServerError.RequiredLogin("No access token available"))
+            return@flow
+        }
+
+        // For simplicity, we're returning the token as is
+        // In a real app, you might want to check if the token is expired
+        // before returning it or attempting to refresh it
+        emit(Success(accessToken))
+    }.catch { exception ->
+        emit(ServerError.General("Failed to get access token: ${exception.message}"))
+    }
+
+    suspend fun refreshAccessToken(): Flow<Result<String>> = flow {
+        refreshMutex.withLock {
+            // Check if another coroutine is already refreshing
+            if (isRefreshing) {
+                // Return the current access token if refresh is in progress
+                val currentToken = tokenDataStore.getAccessToken().first()
+                if (!currentToken.isNullOrEmpty()) {
+                    emit(Success(currentToken))
+                    return@flow
+                } else {
+                    emit(ServerError.RequiredLogin("Token refresh in progress"))
+                    return@flow
+                }
+            }
+            
+            isRefreshing = true
+            
+            try {
+                val refreshToken = tokenDataStore.getRefreshToken().first()
+                
+                if (refreshToken.isNullOrEmpty()) {
+                    emit(ServerError.RequiredLogin("No refresh token available"))
+                    return@flow
+                }
+
+                tokenRefreshRepository.refreshToken(refreshToken).collect { result ->
+                    when (result) {
+                        is Success -> {
+                            // Save the new access token
+                            tokenDataStore.saveAccessToken(result.data)
+                            emit(Success(result.data))
+                        }
+                        is ServerError -> {
+                            // If refresh fails, clear all tokens
+                            clearTokens()
+                            emit(result)
+                        }
+                        else -> emit(result)
+                    }
+                }
+            } finally {
+                isRefreshing = false
+            }
+        }
+    }.catch { exception ->
+        isRefreshing = false
+        emit(ServerError.General("Token refresh failed: ${exception.message}"))
+    }
+
+    suspend fun clearTokens() {
+        tokenDataStore.clearTokens()
+    }
+
+    suspend fun handleTokenExpired(): Flow<Result<String>> {
+        return refreshAccessToken()
+    }
+} 

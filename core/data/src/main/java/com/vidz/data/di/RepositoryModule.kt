@@ -6,12 +6,14 @@ import com.vidz.data.repository.NotificationRepositoryImpl
 import com.vidz.data.repository.OrderRepositoryImpl
 import com.vidz.data.repository.SkuRepositoryImpl
 import com.vidz.data.repository.AppConfigRepositoryImpl
+import com.vidz.data.repository.TokenRefreshRepositoryImpl
 import com.vidz.domain.repository.AuthRepository
 import com.vidz.domain.repository.BlindBoxRepository
 import com.vidz.domain.repository.NotificationRepository
 import com.vidz.domain.repository.OrderRepository
 import com.vidz.domain.repository.SkuRepository
 import com.vidz.domain.repository.AppConfigRepository
+import com.vidz.domain.repository.TokenRefreshRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -57,5 +59,11 @@ abstract class RepositoryModule {
     abstract fun bindBlindBoxRepository(
         blindBoxRepositoryImpl: BlindBoxRepositoryImpl
     ): BlindBoxRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenRefreshRepository(
+        tokenRefreshRepositoryImpl: TokenRefreshRepositoryImpl
+    ): TokenRefreshRepository
 }
 

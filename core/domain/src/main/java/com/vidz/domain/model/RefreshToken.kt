@@ -1,6 +1,6 @@
 package com.vidz.domain.model
 
-data class RefreshTokenDto(
+data class RefreshToken(
     val refreshTokenId: Long = 0L,
     val accountId: Long = 0L,
     val token: String = "",

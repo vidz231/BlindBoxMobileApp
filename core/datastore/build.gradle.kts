@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.blindbox.android.library)
     alias(libs.plugins.blindbox.android.library.jacoco)
@@ -13,10 +12,7 @@ android {
             isIncludeAndroidResources = true
         }
     }
-
-
 }
-
 
 dependencies {
     implementation(projects.core.domain)

@@ -40,6 +40,7 @@ android {
 dependencies {
 //    implementation(projects.app)
     implementation(projects.core.domain)
+    implementation(projects.core.datastore)
     implementation(libs.okhttp.logging)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
