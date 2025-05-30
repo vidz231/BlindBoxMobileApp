@@ -1,6 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BlindBox(
     val blindBoxId: Long = 0L,
     val brand: Brand = Brand(),
@@ -15,6 +17,7 @@ data class BlindBox(
     val updatedAt: String = ""
 )
 
+@Serializable
 data class BlindBoxCampaign(
     val blindBoxId: Long = 0L,
     val promotionalCampaignId: Long = 0L,

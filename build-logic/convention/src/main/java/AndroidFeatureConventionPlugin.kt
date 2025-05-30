@@ -45,6 +45,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx-tracing-ktx").get())
                 "implementation"(libs.findLibrary("kotlinx-serialization-json").get())
                 "implementation"(libs.findLibrary("androidx-compose-material-iconsExtended").get())
+                "implementation"(libs.findLibrary("coil-kt-compose").get())
+                "implementation"(libs.findLibrary("compose-webview").get())
                 "testImplementation"(libs.findLibrary("androidx-navigation-testing").get())
                 "androidTestImplementation"(
                     libs.findLibrary("androidx-lifecycle-runtimeTesting").get(),

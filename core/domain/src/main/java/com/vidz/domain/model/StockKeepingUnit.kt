@@ -1,5 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class StockKeepingUnit(
     val skuId: Long = 0L,
     val name: String = "",

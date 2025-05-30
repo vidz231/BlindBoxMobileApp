@@ -15,16 +15,17 @@ class TokenRefreshRepositoryImpl @Inject constructor(
     private val tokenRefreshApi: TokenRefreshApi
 ) : TokenRefreshRepository {
 
-    override suspend fun refreshToken(refreshToken: String): Flow<Result<String>> = flow {
-        val response = tokenRefreshApi.refreshToken(RefreshTokenRequest(refreshToken))
-        
-        if (response.isSuccessful && response.body() != null) {
-            val newAccessToken = response.body()!!.token
-            emit(Success(newAccessToken))
-        } else {
-            emit(ServerError.RequiredLogin("Token refresh failed: HTTP ${response.code()}"))
+    override suspend fun refreshToken(refreshToken: String): Flow<Result<String>> = 
+        flow {
+            val response = tokenRefreshApi.refreshToken(RefreshTokenRequest(refreshToken))
+            
+            if (response.isSuccessful && response.body() != null) {
+                val newAccessToken = response.body()!!.token
+                emit(Success(newAccessToken))
+            } else {
+                emit(ServerError.RequiredLogin("Token refresh failed: HTTP ${response.code()}"))
+            }
+        }.catch { exception ->
+            emit(ServerError.RequiredLogin("Token refresh failed: ${exception.message}"))
         }
-    }.catch { exception ->
-        emit(ServerError.RequiredLogin("Token refresh failed: ${exception.message}"))
-    }
 } 
