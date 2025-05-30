@@ -1,6 +1,8 @@
-package com.vidz.domain.model
+ package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Account(
     val accountId: Long = 0L,
     val email: String = "",
@@ -19,8 +21,12 @@ data class Account(
     val defaultShippingInfo: ShippingInfo = ShippingInfo()
 )
 
+@Serializable
 sealed class AccountRole {
+    @Serializable
     data object Admin : AccountRole()
+    @Serializable
     data object Staff : AccountRole()
+    @Serializable
     data object Customer : AccountRole()
 }

@@ -72,6 +72,7 @@ dependencies {
     implementation(projects.feature.setting)
     implementation(projects.feature.cart)
     implementation(projects.feature.order)
+    implementation(projects.feature.itemDetail)
     implementation(projects.common.base)
     implementation(projects.common.theme)
     implementation(projects.core.data)

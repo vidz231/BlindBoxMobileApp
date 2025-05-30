@@ -26,8 +26,12 @@ class AuthInterceptor @Inject constructor(
 
         // Get access token and add to request with timeout
         val accessToken = runBlocking {
-            withTimeoutOrNull(5000) { // 5 second timeout
-                tokenRepository.getValidAccessToken().firstOrNull()
+            withTimeoutOrNull(10000) { // Increased to 10 second timeout
+                try {
+                    tokenRepository.getValidAccessToken().firstOrNull()
+                } catch (e: Exception) {
+                    null // Return null on any exception
+                }
             }
         }
 
@@ -47,8 +51,12 @@ class AuthInterceptor @Inject constructor(
             response.close()
             
             val refreshResult = runBlocking {
-                withTimeoutOrNull(10000) { // 10 second timeout for refresh
-                    tokenRepository.handleTokenExpired().firstOrNull()
+                withTimeoutOrNull(15000) { // Increased to 15 second timeout for refresh
+                    try {
+                        tokenRepository.handleTokenExpired().firstOrNull()
+                    } catch (e: Exception) {
+                        null // Return null on any exception
+                    }
                 }
             }
 

@@ -1,5 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Toy(
     val toyId: Long = 0L,
     val name: String = "",
@@ -12,7 +15,10 @@ data class Toy(
     val images: List<Image> = emptyList()
 )
 
+@Serializable
 sealed class ToyRarity {
+    @Serializable
     data object Regular : ToyRarity()
+    @Serializable
     data object Secret : ToyRarity()
 } 

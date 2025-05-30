@@ -1,9 +1,8 @@
-
 plugins {
     alias(libs.plugins.blindbox.android.library)
     alias(libs.plugins.blindbox.android.library.jacoco)
     alias(libs.plugins.blindbox.hilt)
-    id("kotlinx-serialization")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,10 +12,8 @@ android {
             isIncludeAndroidResources = true
         }
     }
-
-
 }
 
 dependencies {
-
+    implementation(libs.kotlinx.serialization.json)
 }

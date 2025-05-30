@@ -1,7 +1,8 @@
 package com.vidz.domain.model
 
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class Image(
     val imageId: Long = 0L,
     val uploader: Account = Account(),

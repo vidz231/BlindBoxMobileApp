@@ -75,28 +75,34 @@ class TokenManager @Inject constructor(
                     return@flow
                 }
 
-                tokenRefreshRepository.refreshToken(refreshToken).collect { result ->
-                    when (result) {
-                        is Success -> {
-                            // Save the new access token
-                            tokenDataStore.saveAccessToken(result.data)
-                            emit(Success(result.data))
-                        }
-                        is ServerError -> {
-                            // If refresh fails, clear all tokens
-                            clearTokens()
-                            emit(result)
-                        }
-                        else -> emit(result)
-                    }
+                // Use flatMapLatest to avoid flow transparency violations
+                val refreshResult = try {
+                    tokenRefreshRepository.refreshToken(refreshToken).first()
+                } catch (e: Exception) {
+                    ServerError.General("Token refresh failed: ${e.message}")
                 }
+                
+                when (refreshResult) {
+                    is Success -> {
+                        // Save the new access token
+                        tokenDataStore.saveAccessToken(refreshResult.data)
+                        emit(Success(refreshResult.data))
+                    }
+                    is ServerError -> {
+                        // If refresh fails, clear all tokens
+                        clearTokens()
+                        emit(refreshResult)
+                    }
+                    else -> emit(refreshResult)
+                }
+            } catch (exception: Exception) {
+                // Clear tokens on any error
+                clearTokens()
+                emit(ServerError.General("Token refresh failed: ${exception.message}"))
             } finally {
                 isRefreshing = false
             }
         }
-    }.catch { exception ->
-        isRefreshing = false
-        emit(ServerError.General("Token refresh failed: ${exception.message}"))
     }
 
     suspend fun clearTokens() {

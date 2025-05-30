@@ -12,7 +12,7 @@ import androidx.navigation.NavBackStackEntry
 
 object NavigationAnimations {
     
-    private const val ANIMATION_DURATION = 800
+    private const val ANIMATION_DURATION = 3000
     
     val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) = {
         slideInHorizontally(
