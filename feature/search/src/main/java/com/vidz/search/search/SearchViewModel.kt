@@ -185,7 +185,7 @@ class SearchViewModel @Inject constructor(
             searchQuery = ""
         )
 
-        performSearch();
+        performSearch()
 
     }
 
