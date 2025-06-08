@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.vidz.order.OrderStatus
+import com.vidz.order.model.OrderItem
+import com.vidz.order.model.OrderStatus
 import java.text.NumberFormat
 import java.util.*
 

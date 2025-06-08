@@ -8,8 +8,9 @@ import com.fpl.base.viewmodel.BaseViewModel
 import com.vidz.domain.Init
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
-import com.vidz.order.OrderItem
-import com.vidz.order.OrderStatus
+import com.vidz.order.model.OrderItem
+import com.vidz.order.model.OrderProductItem
+import com.vidz.order.model.OrderStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

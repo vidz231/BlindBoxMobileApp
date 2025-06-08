@@ -8,6 +8,9 @@ import com.fpl.base.viewmodel.BaseViewModel
 import com.vidz.domain.Init
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
+import com.vidz.order.model.OrderItem
+import com.vidz.order.model.OrderProductItem
+import com.vidz.order.model.OrderStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -100,27 +103,4 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
         val error: String?,
         val orders: List<OrderItem>
     ) : ViewState()
-}
-
-// Models
-data class OrderItem(
-    val id: String,
-    val orderNumber: String,
-    val date: String,
-    val status: OrderStatus,
-    val totalAmount: Double,
-    val items: List<OrderProductItem>
-)
-
-data class OrderProductItem(
-    val name: String,
-    val quantity: Int,
-    val price: Double
-)
-
-enum class OrderStatus {
-    PENDING,
-    PROCESSING,
-    COMPLETED,
-    CANCELLED
 } 
