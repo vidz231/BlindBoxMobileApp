@@ -12,4 +12,6 @@ android {
 dependencies {
        implementation(projects.common.base)
     implementation(projects.common.theme)
+    implementation(projects.core.datastore)
+    implementation(libs.androidx.compose.material.iconsExtended)
 }

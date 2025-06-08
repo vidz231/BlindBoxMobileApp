@@ -62,7 +62,7 @@ fun NavGraphBuilder.addHomeGraph(
         startDestination = DestinationRoutes.HOME_SCREEN_ROUTE,
     ) {
         addHomeNavGraph(navController, onShowSnackbar, sharedTransitionScope)
-        addSearchNavGraph(navController, onShowSnackbar)
+        addSearchNavGraph(navController, onShowSnackbar, sharedTransitionScope)
         addCartNavGraph(navController, onShowSnackbar)
         addSettingNavGraph(navController, onShowSnackbar)
         addOrderNavGraph(navController, onShowSnackbar)

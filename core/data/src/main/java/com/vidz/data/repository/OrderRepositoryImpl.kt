@@ -2,6 +2,7 @@ package com.vidz.data.repository
 
 import com.vidz.data.flow.ServerFlow
 import com.vidz.data.mapper.OrderMapper
+import com.vidz.data.server.retrofit.RetrofitServer
 import com.vidz.data.server.retrofit.api.OrderApi
 import com.vidz.data.server.retrofit.api.CreateOrderRequest
 import com.vidz.data.server.retrofit.api.OrderDetailRequest as ApiOrderDetailRequest
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class OrderRepositoryImpl @Inject constructor(
-    private val orderApi: OrderApi,
+    val retrofitServer: RetrofitServer,
     private val orderMapper: OrderMapper
 ) : OrderRepository {
 
@@ -27,7 +28,7 @@ class OrderRepositoryImpl @Inject constructor(
     ): Flow<Result<List<Order>>> {
         return ServerFlow(
             getData = {
-                orderApi.getOrders(page, size, search, filter).body()!!
+                retrofitServer.orderApi.getOrders(page, size, search, filter).body()!!
             },
             convert = { response: PagedResponse<OrderDto> ->
                 response.content.map { orderMapper.toDomain(it) }
@@ -38,7 +39,7 @@ class OrderRepositoryImpl @Inject constructor(
     override fun getOrderById(orderId: Long): Flow<Result<Order>> {
         return ServerFlow(
             getData = {
-                orderApi.getOrderById(orderId).body()!!
+                retrofitServer.orderApi.getOrderById(orderId).body()!!
             },
             convert = { orderDto ->
                 orderMapper.toDomain(orderDto)
@@ -66,7 +67,7 @@ class OrderRepositoryImpl @Inject constructor(
                     },
                     voucherId = voucherId
                 )
-                orderApi.createOrder(createRequest, accountId).body()!!
+                retrofitServer.orderApi.createOrder(createRequest, accountId).body()!!
             },
             convert = { response ->
                 // Handle the PlaceOrder200Response which contains the order
@@ -79,7 +80,7 @@ class OrderRepositoryImpl @Inject constructor(
     override fun cancelOrder(orderId: Long): Flow<Result<Order>> {
         return ServerFlow(
             getData = {
-                orderApi.cancelOrder(orderId).body()!!
+                retrofitServer.orderApi.cancelOrder(orderId).body()!!
             },
             convert = { orderDto ->
                 orderMapper.toDomain(orderDto)
