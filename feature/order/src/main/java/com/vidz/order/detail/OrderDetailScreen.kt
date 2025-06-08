@@ -2,15 +2,18 @@ package com.vidz.order.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,10 +30,10 @@ fun OrderDetailScreen(
     navController: NavController,
     orderId: String,
     modifier: Modifier = Modifier,
-    orderDetailViewModel: OrderDetailViewModel = hiltViewModel()
+    orderDetailViewModel: OrderDetailViewModel = hiltViewModel(),
+    onShowSnackbar: ((String) -> Unit)? = null
 ) {
     val uiState = orderDetailViewModel.uiState.collectAsStateWithLifecycle()
-    var showCancelDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(orderId) {
         orderDetailViewModel.loadOrderDetail(orderId)
@@ -43,11 +46,6 @@ fun OrderDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { orderDetailViewModel.onTriggerEvent(OrderDetailViewModel.OrderDetailViewEvent.RefreshOrder) }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
                 }
             )
@@ -72,107 +70,35 @@ fun OrderDetailScreen(
                     )
                 }
                 uiState.value.order != null -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp)
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Order Status Card
-                        OrderStatusCard(
-                            order = uiState.value.order!!,
-                            onCancelClick = { showCancelDialog = true }
-                        )
+                        item {
+                            OrderInfoSection(order = uiState.value.order!!)
+                        }
                         
-                        Spacer(modifier = Modifier.height(16.dp))
+                        item {
+                            OrderItemsSection(order = uiState.value.order!!)
+                        }
                         
-                        // Order Info Card
-                        OrderInfoCard(order = uiState.value.order!!)
+                        item {
+                            OrderSummarySection(order = uiState.value.order!!)
+                        }
                         
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Items Card
-                        OrderItemsCard(order = uiState.value.order!!)
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Payment Card
-                        PaymentCard(order = uiState.value.order!!)
+                        if (uiState.value.order!!.status == OrderStatus.PENDING) {
+                            item {
+                                CancelOrderButton(
+                                    onCancelClick = {
+                                        orderDetailViewModel.cancelOrder()
+                                        onShowSnackbar?.invoke("Đơn hàng đã được hủy")
+                                        navController.navigateUp()
+                                    }
+                                )
+                            }
+                        }
                     }
-                }
-            }
-        }
-    }
-
-    if (showCancelDialog) {
-        AlertDialog(
-            onDismissRequest = { showCancelDialog = false },
-            title = { Text("Hủy đơn hàng") },
-            text = { Text("Bạn có chắc chắn muốn hủy đơn hàng này?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        orderDetailViewModel.onTriggerEvent(OrderDetailViewModel.OrderDetailViewEvent.CancelOrder)
-                        showCancelDialog = false
-                    }
-                ) {
-                    Text("Hủy đơn hàng", color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCancelDialog = false }) {
-                    Text("Đóng")
-                }
-            }
-        )
-    }
-
-    // Show snackbar when order is cancelled
-    LaunchedEffect(uiState.value.isCancelled) {
-        if (uiState.value.isCancelled) {
-            // TODO: Show snackbar
-        }
-    }
-}
-
-@Composable
-fun OrderStatusCard(
-    order: OrderItem,
-    onCancelClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Trạng thái đơn hàng",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                StatusChip(status = order.status)
-            }
-            
-            if (order.status == OrderStatus.PENDING) {
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(
-                    onClick = onCancelClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Icon(Icons.Default.Cancel, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Hủy đơn hàng")
                 }
             }
         }
@@ -180,7 +106,7 @@ fun OrderStatusCard(
 }
 
 @Composable
-fun OrderInfoCard(order: OrderItem) {
+private fun OrderInfoSection(order: OrderItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -196,23 +122,21 @@ fun OrderInfoCard(order: OrderItem) {
                 fontWeight = FontWeight.Bold
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             InfoRow("Mã đơn hàng", order.orderNumber)
             InfoRow("Ngày đặt", order.date)
-            InfoRow("Địa chỉ giao hàng", order.shippingAddress)
-            order.estimatedDeliveryDate?.let {
-                InfoRow("Dự kiến giao hàng", it)
-            }
-            order.note?.let {
-                InfoRow("Ghi chú", it)
-            }
+            InfoRow("Trạng thái", getStatusText(order.status))
+            order.shippingAddress?.let { InfoRow("Địa chỉ giao hàng", it) }
+            order.paymentMethod?.let { InfoRow("Phương thức thanh toán", it) }
+            order.estimatedDeliveryDate?.let { InfoRow("Ngày giao hàng dự kiến", it) }
+            order.note?.let { InfoRow("Ghi chú", it) }
         }
     }
 }
 
 @Composable
-fun OrderItemsCard(order: OrderItem) {
+private fun OrderItemsSection(order: OrderItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -228,58 +152,20 @@ fun OrderItemsCard(order: OrderItem) {
                 fontWeight = FontWeight.Bold
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             order.items.forEach { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = item.name,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = "Số lượng: ${item.quantity}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Text(
-                        text = formatCurrency(item.price * item.quantity),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                OrderItemRow(item = item)
+                if (item != order.items.last()) {
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                 }
-            }
-            
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Tổng cộng",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = formatCurrency(order.totalAmount),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
             }
         }
     }
 }
 
 @Composable
-fun PaymentCard(order: OrderItem) {
+private fun OrderSummarySection(order: OrderItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -290,21 +176,59 @@ fun PaymentCard(order: OrderItem) {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Thông tin thanh toán",
+                text = "Tổng cộng",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
-            InfoRow("Phương thức thanh toán", order.paymentMethod)
-            InfoRow("Tổng tiền", formatCurrency(order.totalAmount))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Tổng tiền",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = formatCurrency(order.totalAmount),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
 
 @Composable
-fun InfoRow(label: String, value: String) {
+private fun OrderItemRow(item: OrderProductItem) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = "Số lượng: ${item.quantity}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(
+            text = formatCurrency(item.price * item.quantity),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+@Composable
+private fun InfoRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -324,30 +248,24 @@ fun InfoRow(label: String, value: String) {
 }
 
 @Composable
-fun StatusChip(status: OrderStatus) {
-    val (backgroundColor, textColor) = when (status) {
-        OrderStatus.PENDING -> MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
-        OrderStatus.PROCESSING -> MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.onSecondary
-        OrderStatus.COMPLETED -> MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
-        OrderStatus.CANCELLED -> MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.onError
-    }
-
-    Surface(
-        modifier = Modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = backgroundColor
-    ) {
-        Text(
-            text = when (status) {
-                OrderStatus.PENDING -> "Chờ xử lý"
-                OrderStatus.PROCESSING -> "Đang xử lý"
-                OrderStatus.COMPLETED -> "Hoàn thành"
-                OrderStatus.CANCELLED -> "Đã hủy"
-            },
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = textColor
+private fun CancelOrderButton(onCancelClick: () -> Unit) {
+    Button(
+        onClick = onCancelClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.error
         )
+    ) {
+        Text("Hủy đơn hàng")
+    }
+}
+
+private fun getStatusText(status: OrderStatus): String {
+    return when (status) {
+        OrderStatus.PENDING -> "Chờ xử lý"
+        OrderStatus.PROCESSING -> "Đang xử lý"
+        OrderStatus.COMPLETED -> "Hoàn thành"
+        OrderStatus.CANCELLED -> "Đã hủy"
     }
 }
 
