@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.vidz.order.model.OrderItem
+import com.vidz.order.model.OrderStatus
 import java.text.NumberFormat
 import java.util.*
 
@@ -30,7 +32,8 @@ import java.util.*
 fun OrderScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    orderViewModel: OrderViewModel = hiltViewModel()
+    orderViewModel: OrderViewModel = hiltViewModel(),
+    onShowSnackbar: ((String) -> Unit)? = null
 ) {
     val uiState = orderViewModel.uiState.collectAsStateWithLifecycle()
 
