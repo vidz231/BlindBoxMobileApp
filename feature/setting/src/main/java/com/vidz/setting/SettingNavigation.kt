@@ -18,4 +18,12 @@ fun NavGraphBuilder.addSettingNavGraph(
                popExitTransition = { ExitTransition.None }) {
         SettingScreen(navController)
     }
+    
+    composable(DestinationRoutes.ROOT_EDIT_PROFILE_SCREEN_ROUTE,
+               enterTransition = { EnterTransition.None },
+               exitTransition = { ExitTransition.None },
+               popEnterTransition = { EnterTransition.None },
+               popExitTransition = { ExitTransition.None }) {
+        EditProfileScreen(navController = navController)
+    }
 }
