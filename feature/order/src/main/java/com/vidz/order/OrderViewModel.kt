@@ -23,6 +23,12 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
     initState = OrderViewModelState()
 ) {
 
+    private var onNavigateToOrderDetail: ((String) -> Unit)? = null
+
+    fun setOnNavigateToOrderDetail(callback: (String) -> Unit) {
+        onNavigateToOrderDetail = callback
+    }
+
     init {
         loadOrders()
     }
@@ -73,7 +79,7 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
         when (event) {
             is OrderViewEvent.RefreshOrders -> loadOrders()
             is OrderViewEvent.ViewOrderDetails -> {
-                // TODO: Implement order details navigation
+                onNavigateToOrderDetail?.invoke(event.orderId)
             }
         }
     }
