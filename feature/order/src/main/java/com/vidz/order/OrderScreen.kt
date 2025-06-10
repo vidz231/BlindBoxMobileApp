@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +37,12 @@ fun OrderScreen(
     onShowSnackbar: ((String) -> Unit)? = null
 ) {
     val uiState = orderViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        orderViewModel.setOnNavigateToOrderDetail { orderId ->
+            navController.navigate("${DestinationRoutes.ORDER_DETAIL_SCREEN_ROUTE}/$orderId")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -196,10 +203,10 @@ fun StatusChip(status: OrderStatus) {
     ) {
         Text(
             text = when (status) {
-                OrderStatus.PENDING -> "Chờ xử lý"
-                OrderStatus.PROCESSING -> "Đang xử lý"
-                OrderStatus.COMPLETED -> "Hoàn thành"
-                OrderStatus.CANCELLED -> "Đã hủy"
+                OrderStatus.PENDING -> "PENDING"
+                OrderStatus.PROCESSING -> "PROCESSING"
+                OrderStatus.COMPLETED -> "COMPLETED"
+                OrderStatus.CANCELLED -> "CANCELLED"
             },
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
