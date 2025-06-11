@@ -7,6 +7,7 @@ import javax.inject.Inject
 
 data class CartSummary(
     val itemsCount: Int,
+    val totalQuantity: Int,
     val totalPrice: Double
 )
 
@@ -16,10 +17,13 @@ class GetCartSummaryUseCase @Inject constructor(
     suspend operator fun invoke(): Flow<CartSummary> {
         return combine(
             cartRepository.getCartItemsCount(),
-            cartRepository.getTotalPrice()
-        ) { count, totalPrice ->
+            cartRepository.getTotalPrice(),
+            cartRepository.observeCartItems()
+        ) { count, totalPrice, cartItems ->
+            val totalQuantity = cartItems.sumOf { it.quantity }
             CartSummary(
                 itemsCount = count,
+                totalQuantity = totalQuantity,
                 totalPrice = totalPrice
             )
         }
