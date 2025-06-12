@@ -12,4 +12,3 @@ sealed class ServerError(open val message: String) : Result<Nothing>(){
     data class NotEnoughCredit(override val message: String) : ServerError(message)
     data class Internet(override val message: String) : ServerError(message)
 }
-

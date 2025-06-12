@@ -162,7 +162,9 @@ fun DetailScreen(
     }
     val onBuyNow = {
         selectedSku?.let { sku ->
-            onShowSnackbar("Proceeding to checkout with ${sku.name}")
+            // Navigate to checkout with buy now item
+            val buyNowData = "buyNowSkuId=${sku.skuId}&buyNowQuantity=1&buyNowName=${sku.name}&buyNowPrice=${sku.price}&buyNowImageUrl=${sku.image.imageUrl}&buyNowBlindBoxName=${currentBlindBox?.name ?: ""}"
+            navController.navigate("checkout?checkoutType=BUY_NOW&$buyNowData")
         }
     }
     //endregion

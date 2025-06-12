@@ -15,6 +15,11 @@ data class OrderDto(
     val finalTotal: Double = 0.0
 )
 
+data class CreateOrderResult(
+    val order: OrderDto,
+    val paymentRedirectUrl: String
+)
+
 sealed class OrderStatus {
     data object Created : OrderStatus()
     data object Preparing : OrderStatus()
