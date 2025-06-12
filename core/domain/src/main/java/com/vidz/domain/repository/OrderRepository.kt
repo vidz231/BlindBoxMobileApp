@@ -2,6 +2,7 @@ package com.vidz.domain.repository
 
 import com.vidz.domain.Result
 import com.vidz.domain.model.OrderDto as Order
+import com.vidz.domain.model.CreateOrderResult
 import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
@@ -19,7 +20,7 @@ interface OrderRepository {
         shippingInfoId: Long,
         items: List<OrderDetailRequest>,
         voucherId: Long? = null
-    ): Flow<Result<Order>>
+    ): Flow<Result<CreateOrderResult>>
     
     fun cancelOrder(orderId: Long): Flow<Result<Order>>
 }

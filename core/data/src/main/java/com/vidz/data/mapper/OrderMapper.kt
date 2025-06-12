@@ -7,7 +7,9 @@ import com.vidz.domain.model.OrderStatus
 import com.vidz.domain.model.Transaction
 import com.vidz.domain.model.Voucher
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class OrderMapper @Inject constructor(
     private val accountMapper: AccountMapper,
     private val orderStatusHistoryMapper: OrderStatusHistoryMapper,
