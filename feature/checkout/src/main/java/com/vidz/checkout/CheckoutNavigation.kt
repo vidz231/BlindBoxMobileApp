@@ -88,8 +88,8 @@ fun NavGraphBuilder.addCheckoutNavGraph(
         ShippingSelectionScreen(
             onBackClick = { navController.navigateUp() },
             onShippingInfoSelected = { shippingInfo ->
-                // Pass the shipping info back to checkout screen
-                navController.previousBackStackEntry?.savedStateHandle?.set("selected_shipping_info", shippingInfo)
+                // Pass only the shipping info ID back to checkout screen
+                navController.previousBackStackEntry?.savedStateHandle?.set("selected_shipping_info_id", shippingInfo.shippingInfoId)
                 navController.navigateUp()
             },
             onCreateNewShippingInfo = {
