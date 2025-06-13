@@ -1,5 +1,6 @@
 package com.vidz.checkout
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.fpl.base.interfaces.ViewEvent
 import com.fpl.base.interfaces.ViewModelState
@@ -10,6 +11,7 @@ import com.vidz.domain.model.ShippingInfo
 import com.vidz.domain.model.Voucher
 import com.vidz.domain.usecase.CreateOrderFromCartUseCase
 import com.vidz.domain.usecase.CreateOrderUseCase
+import com.vidz.domain.usecase.GetShippingInfoByIdUseCase
 import com.vidz.domain.usecase.ObserveCartItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -21,7 +23,9 @@ import javax.inject.Inject
 class CheckoutViewModel @Inject constructor(
     private val createOrderFromCartUseCase: CreateOrderFromCartUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
-    private val observeCartItemsUseCase: ObserveCartItemsUseCase
+    private val getShippingInfoByIdUseCase: GetShippingInfoByIdUseCase,
+    private val observeCartItemsUseCase: ObserveCartItemsUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel<
         CheckoutViewModel.CheckoutViewEvent,
         CheckoutViewModel.CheckoutViewState,
@@ -170,6 +174,36 @@ class CheckoutViewModel @Inject constructor(
 
     fun updateSelectedShippingInfo(shippingInfo: ShippingInfo) {
         selectShippingInfo(shippingInfo)
+    }
+
+    fun loadSelectedShippingInfo() {
+        viewModelScope.launch {
+            try {
+                val shippingInfoId = savedStateHandle.get<Long>("selected_shipping_info_id")
+                if (shippingInfoId != null && shippingInfoId > 0) {
+                    getShippingInfoByIdUseCase(shippingInfoId).collect { result ->
+                        when (result) {
+                            is Success -> {
+                                selectShippingInfo(result.data)
+                            }
+                            else -> {
+                                viewModelState.update {
+                                    it.copy(
+                                        errorMessage = "Failed to load selected shipping information"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                viewModelState.update {
+                    it.copy(
+                        errorMessage = "Failed to load shipping information: ${e.message}"
+                    )
+                }
+            }
+        }
     }
 
     private fun applyCoupon(code: String) {

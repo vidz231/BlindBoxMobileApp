@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,6 +36,10 @@ fun ShippingSelectionScreen(
     //region Event Handler
     LaunchedEffect(Unit) {
         viewModel.onTriggerEvent(ShippingSelectionViewModel.ShippingSelectionViewEvent.LoadShippingInfos)
+    }
+
+    val handleRefresh = {
+        viewModel.onTriggerEvent(ShippingSelectionViewModel.ShippingSelectionViewEvent.RefreshShippingInfos)
     }
 
     val handleShippingInfoSelect = { shippingInfo: ShippingInfo ->
@@ -70,12 +75,75 @@ fun ShippingSelectionScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
+                    // Mapbox Integration Area
+                    Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Map",
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "Mapbox Integration Area",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Map will be rendered here",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                // Refresh Button
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        OutlinedButton(
+                            onClick = handleRefresh,
+                            enabled = !uiState.isLoading
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh",
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Refresh")
+                        }
+                    }
+                }
+                
                 // Create New Address Button
                 item {
                     Card(
@@ -199,26 +267,31 @@ fun ShippingSelectionScreen(
                         }
                     }
                 }
-            }
+                
+                // Confirm Selection Button
+                if (selectedShippingInfo != null) {
+                    item {
+                        PrimaryButton(
+                            text = "Use This Address",
+                            onClick = handleConfirmSelection,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
 
-            // Confirm Selection Button
-            if (selectedShippingInfo != null) {
-                PrimaryButton(
-                    text = "Use This Address",
-                    onClick = handleConfirmSelection,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
-            }
-
-            if (uiState.errorMessage.isNotEmpty()) {
-                Text(
-                    text = uiState.errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(16.dp)
-                )
+                if (uiState.errorMessage.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = uiState.errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+                }
             }
         }
     }

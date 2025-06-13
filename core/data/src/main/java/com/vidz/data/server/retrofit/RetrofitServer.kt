@@ -17,4 +17,5 @@ class RetrofitServer @Inject constructor(private val retrofit: Retrofit) {
     val blindBoxApi: BlindBoxApi by lazy { retrofit.create(BlindBoxApi::class.java) }
     val transactionApi: TransactionApi by lazy { retrofit.create(TransactionApi::class.java) }
     val messageApi: MessageApi by lazy { retrofit.create(MessageApi::class.java) }
+    val shippingInfoApi: ShippingInfoApi by lazy { retrofit.create(ShippingInfoApi::class.java) }
 }

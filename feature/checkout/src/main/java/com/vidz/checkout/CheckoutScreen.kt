@@ -67,11 +67,11 @@ fun CheckoutScreen(
 
     // Handle shipping info selection from navigation
     LaunchedEffect(navController) {
-        navController?.currentBackStackEntry?.savedStateHandle?.getLiveData<ShippingInfo>("selected_shipping_info")?.observeForever { shippingInfo ->
-            shippingInfo?.let {
-                viewModel.updateSelectedShippingInfo(it)
+        navController?.currentBackStackEntry?.savedStateHandle?.getLiveData<Long>("selected_shipping_info_id")?.observeForever { shippingInfoId ->
+            if (shippingInfoId != null && shippingInfoId > 0) {
+                viewModel.loadSelectedShippingInfo()
                 // Clear the saved state to prevent re-triggering
-                navController.currentBackStackEntry?.savedStateHandle?.remove<ShippingInfo>("selected_shipping_info")
+                navController.currentBackStackEntry?.savedStateHandle?.remove<Long>("selected_shipping_info_id")
             }
         }
     }
@@ -171,43 +171,7 @@ fun CheckoutScreen(
                     }
                 }
 
-                // Mapbox Area Placeholder
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.LocationOn,
-                                    contentDescription = "Map",
-                                    modifier = Modifier.size(48.dp),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = "Mapbox Integration Area",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = "Map will be rendered here",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
+
 
                 // Checkout Items
                 items(uiState.checkoutItems) { item ->
