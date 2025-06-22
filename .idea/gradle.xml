@@ -38,6 +38,7 @@
             <option value="$PROJECT_DIR$/feature/checkout" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/item_detail" />
+            <option value="$PROJECT_DIR$/feature/message" />
             <option value="$PROJECT_DIR$/feature/order" />
             <option value="$PROJECT_DIR$/feature/order_detail" />
             <option value="$PROJECT_DIR$/feature/search" />

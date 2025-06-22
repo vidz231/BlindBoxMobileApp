@@ -97,7 +97,7 @@ fun HomeScreen(
     }
     
     val onChatClick: () -> Unit = {
-        // Navigate to chat or show chat dialog
+        navController.navigate(DestinationRoutes.MESSAGE_SCREEN_ROUTE)
     }
     //endregion
 

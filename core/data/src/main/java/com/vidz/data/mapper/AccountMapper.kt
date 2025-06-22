@@ -62,15 +62,15 @@ class AccountMapper @Inject constructor(
     private fun mapAccountRoleToDomain(dtoRole: RoleEnum): AccountRole {
         return when (dtoRole) {
             RoleEnum.ADMIN -> AccountRole.Admin
-            RoleEnum.USER -> AccountRole.Staff
+            RoleEnum.CUSTOMER -> AccountRole.Staff
         }
     }
 
     private fun mapAccountRoleToDto(domainRole: AccountRole): RoleEnum {
         return when (domainRole) {
             AccountRole.Admin -> RoleEnum.ADMIN
-            AccountRole.Staff -> RoleEnum.USER
-            AccountRole.Customer -> RoleEnum.USER
+            AccountRole.Staff -> RoleEnum.CUSTOMER
+            AccountRole.Customer -> RoleEnum.CUSTOMER
         }
     }
 } 

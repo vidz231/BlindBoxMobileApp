@@ -36,7 +36,7 @@ class NetworkModule {
             
         return Retrofit.Builder()
             .client(client)
-            .baseUrl("http://40.87.80.54:8080/api/v1/")
+            .baseUrl("http://52.163.66.235:8080/api/v1/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }

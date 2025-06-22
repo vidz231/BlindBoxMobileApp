@@ -1,5 +1,8 @@
 package com.vidz.data.server.retrofit.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ShippingInfoDto(
     val shippingInfoId: Long = 0L,
     val name: String = "",
