@@ -8,6 +8,7 @@ object DestinationRoutes {
     const val SEARCH_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/search"
     const val SETTING_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/setting"
     const val ORDER_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/order"
+    const val MESSAGE_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/message"
     const val FORGOT_PASSWORD_SCREEN_ROUTE = "${ROOT_LOGIN_SCREEN_ROUTE}/forgot_password_screen"
     const val REGISTER_SCREEN_ROUTE = "${ROOT_LOGIN_SCREEN_ROUTE}/register_screen"
     const val ORDER_DETAIL_SCREEN_ROUTE = "${ROOT_HOME_SCREEN_ROUTE}/order_detail"

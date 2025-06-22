@@ -1,0 +1,248 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "01b9cc1c440366f72f90f1cd4821a6cd",
+    "entities": [
+      {
+        "tableName": "cart_items",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `addedAt` INTEGER NOT NULL, `sku_skuId` INTEGER NOT NULL, `sku_name` TEXT NOT NULL, `sku_price` REAL NOT NULL, `sku_imageUrl` TEXT NOT NULL, `sku_isVisible` INTEGER NOT NULL, `slot_slotId` INTEGER, `slot_position` INTEGER, `slot_isVisible` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sku.skuId",
+            "columnName": "sku_skuId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sku.name",
+            "columnName": "sku_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sku.price",
+            "columnName": "sku_price",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sku.imageUrl",
+            "columnName": "sku_imageUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sku.isVisible",
+            "columnName": "sku_isVisible",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slot.slotId",
+            "columnName": "slot_slotId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "slot.position",
+            "columnName": "slot_position",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "slot.isVisible",
+            "columnName": "slot_isVisible",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "messages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`messageId` INTEGER NOT NULL, `conversationId` INTEGER NOT NULL, `content` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `isFromCurrentUser` INTEGER NOT NULL, `sender_accountId` INTEGER NOT NULL, `sender_firstName` TEXT NOT NULL, `sender_lastName` TEXT NOT NULL, `sender_avatarUrl` TEXT NOT NULL, `sender_isVisible` INTEGER NOT NULL, PRIMARY KEY(`messageId`))",
+        "fields": [
+          {
+            "fieldPath": "messageId",
+            "columnName": "messageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFromCurrentUser",
+            "columnName": "isFromCurrentUser",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender.accountId",
+            "columnName": "sender_accountId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender.firstName",
+            "columnName": "sender_firstName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender.lastName",
+            "columnName": "sender_lastName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender.avatarUrl",
+            "columnName": "sender_avatarUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender.isVisible",
+            "columnName": "sender_isVisible",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "messageId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "conversations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`conversationId` INTEGER NOT NULL, `user_accountId` INTEGER NOT NULL, `user_firstName` TEXT NOT NULL, `user_lastName` TEXT NOT NULL, `user_avatarUrl` TEXT NOT NULL, `user_isVisible` INTEGER NOT NULL, `staff_accountId` INTEGER NOT NULL, `staff_firstName` TEXT NOT NULL, `staff_lastName` TEXT NOT NULL, `staff_avatarUrl` TEXT NOT NULL, `staff_isVisible` INTEGER NOT NULL, PRIMARY KEY(`conversationId`))",
+        "fields": [
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user.accountId",
+            "columnName": "user_accountId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user.firstName",
+            "columnName": "user_firstName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user.lastName",
+            "columnName": "user_lastName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user.avatarUrl",
+            "columnName": "user_avatarUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user.isVisible",
+            "columnName": "user_isVisible",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "staff.accountId",
+            "columnName": "staff_accountId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "staff.firstName",
+            "columnName": "staff_firstName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "staff.lastName",
+            "columnName": "staff_lastName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "staff.avatarUrl",
+            "columnName": "staff_avatarUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "staff.isVisible",
+            "columnName": "staff_isVisible",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "conversationId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01b9cc1c440366f72f90f1cd4821a6cd')"
+    ]
+  }
+}
