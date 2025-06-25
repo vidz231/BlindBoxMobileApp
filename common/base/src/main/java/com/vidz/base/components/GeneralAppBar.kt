@@ -1,5 +1,6 @@
 package com.vidz.base.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -28,9 +29,12 @@ fun GeneralAppBar(
     leadingContent: (@Composable RowScope.() -> Unit)? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onCartClick: () -> Unit = {},
+    cartItemsCount: Int = 0,
     onChatClick: () -> Unit = {},
     isLargeAppBar: Boolean = false
 ) {
+    //print
+    Log.d("GeneralAppBar", "isLargeAppBar: $isLargeAppBar, cartItemsCount: $cartItemsCount")
     val colors = TopAppBarDefaults.topAppBarColors(
         containerColor = MaterialTheme.colorScheme.surface,
         titleContentColor = MaterialTheme.colorScheme.onSurface,
@@ -43,6 +47,7 @@ fun GeneralAppBar(
                 AppBarContent(
                     leadingContent = leadingContent,
                     onCartClick = onCartClick,
+                    cartItemsCount = cartItemsCount,
                     onChatClick = onChatClick
                 )
             },
@@ -60,6 +65,7 @@ fun GeneralAppBar(
                 AppBarContent(
                     leadingContent = leadingContent,
                     onCartClick = onCartClick,
+                    cartItemsCount = cartItemsCount,
                     onChatClick = onChatClick
                 )
             },
@@ -74,6 +80,7 @@ fun GeneralAppBar(
 private fun AppBarContent(
     leadingContent: (@Composable RowScope.() -> Unit)?,
     onCartClick: () -> Unit,
+    cartItemsCount: Int,
     onChatClick: () -> Unit
 ) {
     Row(
@@ -95,11 +102,24 @@ private fun AppBarContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onCartClick) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = "Cart",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                androidx.compose.material3.BadgedBox(
+                    badge = {
+                        if (cartItemsCount > 0) {
+                            androidx.compose.material3.Badge {
+                                androidx.compose.material3.Text(
+                                    text = cartItemsCount.coerceAtMost(99).toString(),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "Cart",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
             
             IconButton(onClick = onChatClick) {
