@@ -24,8 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.vidz.base.navigation.DestinationRoutes
-import com.vidz.order.model.OrderItem
-import com.vidz.order.model.OrderStatus
+import com.vidz.domain.model.OrderDto
+import com.vidz.domain.model.OrderStatus
 import java.text.NumberFormat
 import java.util.*
 
@@ -107,7 +107,7 @@ fun OrderScreen(
 
 @Composable
 fun OrderItemCard(
-    order: OrderItem,
+    order: OrderDto,
     onClick: () -> Unit
 ) {
     Card(
@@ -132,13 +132,13 @@ fun OrderItemCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                StatusChip(status = order.status)
+                StatusChip(status = order.latestStatus)
             }
             
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "Ngày đặt: ${order.date}",
+                text = "Ngày đặt: ${order.createdAt}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

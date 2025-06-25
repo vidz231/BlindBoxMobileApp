@@ -1,4 +1,4 @@
-package com.vidz.order.detail
+package com.vidz.order_detail
 
 import androidx.lifecycle.viewModelScope
 import com.fpl.base.interfaces.ViewEvent
@@ -11,54 +11,77 @@ import com.vidz.domain.Success
 import com.vidz.order.model.OrderItem
 import com.vidz.order.model.OrderProductItem
 import com.vidz.order.model.OrderStatus
+import com.vidz.domain.usecase.GetOrderByIdUseCase
+import com.vidz.domain.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.vidz.domain.model.PaymentMethod
+import com.vidz.domain.model.OrderStatus as DomainOrderStatus
+import com.vidz.domain.model.OrderDto
+import com.vidz.domain.model.OrderDetail
 
 @HiltViewModel
-class OrderDetailViewModel @Inject constructor() : BaseViewModel<
+class OrderDetailViewModel @Inject constructor(
+    private val getOrderByIdUseCase: GetOrderByIdUseCase
+) : BaseViewModel<
         OrderDetailViewModel.OrderDetailViewEvent,
         OrderDetailViewModel.OrderDetailViewState,
         OrderDetailViewModel.OrderDetailViewModelState>(
     initState = OrderDetailViewModelState()
 ) {
 
+    private fun paymentMethodToString(pm: PaymentMethod): String = when(pm) {
+        is PaymentMethod.InternalWallet -> "Ví nội bộ"
+        is PaymentMethod.Paypal -> "Paypal"
+        is PaymentMethod.Vnpay -> "Vnpay"
+    }
+
+    private fun mapOrderStatus(status: DomainOrderStatus): OrderStatus = when(status) {
+        is DomainOrderStatus.Created -> OrderStatus.PENDING
+        is DomainOrderStatus.Preparing -> OrderStatus.PROCESSING
+        is DomainOrderStatus.PaymentFailed -> OrderStatus.CANCELLED
+        is DomainOrderStatus.PaymentExpired -> OrderStatus.CANCELLED
+        is DomainOrderStatus.Canceled -> OrderStatus.CANCELLED
+        is DomainOrderStatus.ReadyForPickup -> OrderStatus.PROCESSING
+        is DomainOrderStatus.Shipping -> OrderStatus.PROCESSING
+        is DomainOrderStatus.Delivered -> OrderStatus.COMPLETED
+        is DomainOrderStatus.Received -> OrderStatus.COMPLETED
+        is DomainOrderStatus.Completed -> OrderStatus.COMPLETED
+    }
+
+    fun getStatusTextVi(status: OrderStatus): String = when(status) {
+        OrderStatus.PENDING -> "Chờ xác nhận"
+        OrderStatus.PROCESSING -> "Đang xử lý/giao hàng"
+        OrderStatus.COMPLETED -> "Hoàn thành"
+        OrderStatus.CANCELLED -> "Đã hủy/Thanh toán thất bại"
+    }
+
     fun loadOrderDetail(orderId: String) {
         viewModelScope.launch {
-            viewModelState.value = viewModelState.value.copy(isLoading = true)
-            // TODO: Implement order detail loading logic
-            // For now, we'll just simulate loading
-            kotlinx.coroutines.delay(1000)
-            
-            // Simulate data
-            viewModelState.value = viewModelState.value.copy(
-                isLoading = false,
-                order = OrderItem(
-                    id = orderId,
-                    orderNumber = "ORD-$orderId",
-                    date = "2024-03-20",
-                    status = OrderStatus.PENDING,
-                    totalAmount = 150000.0,
-                    items = listOf(
-                        OrderProductItem(
-                            name = "Blind Box A",
-                            quantity = 2,
-                            price = 75000.0,
-                            imageUrl = "https://example.com/blindbox-a.jpg"
-                        ),
-                        OrderProductItem(
-                            name = "Blind Box B",
-                            quantity = 1,
-                            price = 100000.0,
-                            imageUrl = "https://example.com/blindbox-b.jpg"
+            val currentState = viewModelState.value
+            viewModelState.value = currentState.copy(isLoading = true, error = null)
+            getOrderByIdUseCase.invoke(orderId.toLong()).collect { result ->
+                when (result) {
+                    is Success -> {
+                        val order = result.data as OrderDto
+                        viewModelState.value = currentState.copy(
+                            isLoading = false,
+                            order = order,
+                            error = null
                         )
-                    ),
-                    shippingAddress = "123 Đường ABC, Quận XYZ, TP.HCM",
-                    paymentMethod = "Chuyển khoản ngân hàng",
-                    note = "Giao hàng giờ hành chính",
-                    estimatedDeliveryDate = "2024-03-25"
-                )
-            )
+                    }
+                    is ServerError -> {
+                        viewModelState.value = currentState.copy(
+                            isLoading = false,
+                            error = result.message ?: "Đã có lỗi xảy ra"
+                        )
+                    }
+                    is Init -> {
+                        viewModelState.value = currentState.copy(isLoading = false)
+                    }
+                }
+            }
         }
     }
 
@@ -98,7 +121,7 @@ class OrderDetailViewModel @Inject constructor() : BaseViewModel<
     data class OrderDetailViewModelState(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val order: OrderItem? = null,
+        val order: OrderDto? = null,
         val isCancelled: Boolean = false
     ) : ViewModelState() {
         override fun toUiState(): ViewState = OrderDetailViewState(
@@ -113,7 +136,7 @@ class OrderDetailViewModel @Inject constructor() : BaseViewModel<
     data class OrderDetailViewState(
         val isLoading: Boolean,
         val error: String?,
-        val order: OrderItem?,
+        val order: OrderDto?,
         val isCancelled: Boolean
     ) : ViewState()
 }

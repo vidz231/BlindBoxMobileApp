@@ -8,7 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vidz.base.navigation.DestinationRoutes
-import com.vidz.order.detail.OrderDetailScreen
+import com.vidz.order_detail.OrderDetailScreen
 
 fun NavGraphBuilder.addOrderNavGraph(
     navController: NavController,
