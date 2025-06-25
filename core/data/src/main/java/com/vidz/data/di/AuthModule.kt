@@ -2,6 +2,7 @@ package com.vidz.data.di
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.vidz.blindbox.core.data.BuildConfig
 import com.vidz.data.repository.AuthRepositoryImpl
 import com.vidz.data.server.retrofit.AuthInterceptor
 import com.vidz.data.server.retrofit.api.TokenRefreshApi
@@ -48,7 +49,7 @@ abstract class AuthModule {
                 
             val retrofit = Retrofit.Builder()
                 .client(client)
-                .baseUrl("http://40.87.80.54:8080/api/v1/")
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
 

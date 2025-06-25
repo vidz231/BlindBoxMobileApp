@@ -10,6 +10,7 @@ import com.vidz.data.server.retrofit.api.PagedResponse
 import com.vidz.data.server.retrofit.dto.OrderDto
 import com.vidz.domain.Result
 import com.vidz.domain.model.OrderDto as Order
+import com.vidz.domain.model.CreateOrderResult
 import com.vidz.domain.repository.OrderRepository
 import com.vidz.domain.repository.OrderDetailRequest
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +53,7 @@ class OrderRepositoryImpl @Inject constructor(
         shippingInfoId: Long,
         items: List<OrderDetailRequest>,
         voucherId: Long?
-    ): Flow<Result<Order>> {
+    ): Flow<Result<CreateOrderResult>> {
         return ServerFlow(
             getData = {
                 val createRequest = CreateOrderRequest(
@@ -70,9 +71,13 @@ class OrderRepositoryImpl @Inject constructor(
                 retrofitServer.orderApi.createOrder(createRequest, accountId).body()!!
             },
             convert = { response ->
-                // Handle the PlaceOrder200Response which contains the order
-                response.order?.let { orderMapper.toDomain(it) } 
-                    ?: throw IllegalStateException("Order creation failed - no order returned")
+                // Handle the PlaceOrder200Response which contains both order and payment URL
+                response.order?.let { 
+                    CreateOrderResult(
+                        order = orderMapper.toDomain(it),
+                        paymentRedirectUrl = response.paymentRedirectUrl
+                    )
+                } ?: throw IllegalStateException("Order creation failed - no order returned")
             }
         ).execute()
     }

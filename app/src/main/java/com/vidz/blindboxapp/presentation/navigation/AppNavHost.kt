@@ -21,6 +21,7 @@ import com.vidz.base.navigation.NavigationAnimations.exitTransition
 import com.vidz.base.navigation.NavigationAnimations.popEnterTransition
 import com.vidz.base.navigation.NavigationAnimations.popExitTransition
 import com.vidz.cart.addCartNavGraph
+import com.vidz.checkout.addCheckoutNavGraph
 import com.vidz.detail.addDetailNavGraph
 import com.vidz.home.addHomeNavGraph
 import com.vidz.message.addMessageNavGraph
@@ -65,6 +66,7 @@ fun NavGraphBuilder.addHomeGraph(
         addHomeNavGraph(navController, onShowSnackbar, sharedTransitionScope)
         addSearchNavGraph(navController, onShowSnackbar, sharedTransitionScope)
         addCartNavGraph(navController, onShowSnackbar)
+        addCheckoutNavGraph(navController, onShowSnackbar)
         addSettingNavGraph(navController, onShowSnackbar)
         addOrderNavGraph(navController, onShowSnackbar)
         addMessageNavGraph(navController, onShowSnackbar)

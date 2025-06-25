@@ -54,15 +54,7 @@ class BlindboxNavController(val navController: NavHostController) {
                 }
             }
 
-            DestinationRoutes.CART_SCREEN_ROUTE -> {
-                navController.navigate("$route?numberItemOfPage=$numberItemOfPage") {
-                    popUpTo(HOME_SCREEN_ROUTE) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
+
 
             DestinationRoutes.ORDER_SCREEN_ROUTE -> {
                 navController.navigate("$route?numberItemOfPage=$numberItemOfPage") {

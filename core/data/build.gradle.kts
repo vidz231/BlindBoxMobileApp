@@ -22,8 +22,8 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://40.87.80.54:8080/api/v1/\""
-            )
+                "\"http://52.163.66.235:8080/api/v1/\""
+                )
         }
         release {
             isMinifyEnabled = true

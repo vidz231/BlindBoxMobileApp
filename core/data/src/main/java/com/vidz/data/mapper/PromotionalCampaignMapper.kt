@@ -4,7 +4,9 @@ import com.vidz.data.server.retrofit.dto.PromotionalCampaignDto
 import com.vidz.domain.model.PromotionalCampaign
 import com.vidz.domain.model.BlindBoxCampaign
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PromotionalCampaignMapper @Inject constructor() : BaseRemoteMapper<PromotionalCampaign, PromotionalCampaignDto> {
 
     override fun toDomain(external: PromotionalCampaignDto): PromotionalCampaign {

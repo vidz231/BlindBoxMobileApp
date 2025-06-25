@@ -1,5 +1,6 @@
 package com.vidz.blindboxapp.presentation.app
 
+import android.Manifest
 import android.R.attr.onClick
 import android.R.id.message
 import android.annotation.SuppressLint
@@ -37,6 +38,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.vidz.base.components.NotificationBannerManager
+import com.vidz.base.components.NotificationPermissionDialog
+import com.vidz.base.components.PermissionManager
+import com.vidz.base.components.PermissionState
+import com.vidz.base.components.PermissionStatus
 import com.vidz.base.navigation.DestinationRoutes
 import com.vidz.base.navigation.DestinationRoutes.HOME_SCREEN_ROUTE
 import com.vidz.blindboxapp.BuildConfig
@@ -54,11 +60,38 @@ import kotlinx.coroutines.launch
     "RestrictedApi"
 )
 fun BlindBoxApp(
+    shouldNavigateToCart: Boolean = false,
+    isFromNotification: Boolean = false,
     blindboxAppViewModel: BlindboxAppViewModel = hiltViewModel()
 ) {
     val navController = rememberBlindboxNavController()
     val uiState = blindboxAppViewModel.uiState.collectAsStateWithLifecycle().value
     val currentBackStackEntry = navController.navController.currentBackStackEntryAsState()
+
+    //region Define Var
+    var showNotificationPermissionDialog by remember { mutableStateOf(false) }
+    var requestNotificationPermission by remember { mutableStateOf<(() -> Unit)?>(null) }
+    var notificationPermissionState by remember { mutableStateOf<PermissionState?>(null) }
+    //endregion
+
+    //region Event Handler
+    val onNotificationPermissionRequest: () -> Unit = {
+        showNotificationPermissionDialog = false
+        requestNotificationPermission?.invoke()
+    }
+    val onNotificationPermissionDismiss = {
+        showNotificationPermissionDialog = false
+    }
+
+    val onPermissionResult: (PermissionState) -> Unit = { state ->
+        notificationPermissionState = state
+        Log.d("BlindBoxApp", "Notification permission status: ${state.status}")
+    }
+    
+    val onRequestPermissionCallback = { requestFunction: () -> Unit ->
+        requestNotificationPermission = requestFunction
+    }
+    //endregion
 
     // Track both the route and the navController itself to ensure proper recomposition
     LaunchedEffect(currentBackStackEntry.value?.destination?.route) {
@@ -70,6 +103,24 @@ fun BlindBoxApp(
         blindboxAppViewModel.onTriggerEvent(
             BlindboxAppViewModel.BlindBoxViewEvent.ObserveNavDestination(navController.navController)
         )
+    }
+
+    // Handle navigation to cart from notification
+    LaunchedEffect(shouldNavigateToCart) {
+        if (shouldNavigateToCart) {
+            delay(500) // Small delay to ensure UI is ready
+            navController.navigateToNavigationBar(DestinationRoutes.CART_SCREEN_ROUTE)
+        }
+    }
+
+    // Handle notification permission on app start (only if NOT from notification)
+    LaunchedEffect(notificationPermissionState, isFromNotification) {
+        notificationPermissionState?.let { state ->
+            if (state.status == PermissionStatus.NOT_REQUESTED && !isFromNotification) {
+                // Show custom dialog for better UX, but not when coming from notification
+                showNotificationPermissionDialog = true
+            }
+        }
     }
 
     // Track if back was already pressed once
@@ -117,7 +168,15 @@ fun BlindBoxApp(
 
 
 
+    // Permission Manager - handles notification permission (invisible component)
+    PermissionManager(
+        permission = Manifest.permission.POST_NOTIFICATIONS,
+        onPermissionResult = onPermissionResult,
+        onRequestPermission = onRequestPermissionCallback
+    )
+
     BlindBoxTheme(darkTheme = false) {
+        //region ui
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -139,6 +198,17 @@ fun BlindBoxApp(
                 }
             )
         }
+
+        //region Dialog and Sheet
+        // Show notification permission dialog
+        if (showNotificationPermissionDialog) {
+            NotificationPermissionDialog(
+                onRequestPermission = onNotificationPermissionRequest,
+                onDismiss = onNotificationPermissionDismiss
+            )
+        }
+        //endregion
+        //endregion
     }
 }
 
@@ -159,11 +229,6 @@ val bottomNavItems = listOf(
         "Search",
         Icons.Filled.Search,
         DestinationRoutes.SEARCH_SCREEN_ROUTE
-    ),
-    BottomNavItem(
-        "Cart",
-        Icons.Filled.ShoppingCart,
-        DestinationRoutes.CART_SCREEN_ROUTE
     ),
     BottomNavItem(
         "Order",
@@ -236,4 +301,3 @@ fun DoubleBackToExitApp(streamUiState: BlindboxAppViewModel.BlindBoxViewState) {
         }
     }
 }
-

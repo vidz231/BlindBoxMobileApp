@@ -54,7 +54,6 @@ class BlindboxAppViewModel @Inject constructor() : BaseViewModel<
         val allowShowBottomBar = listOf(
             DestinationRoutes.HOME_SCREEN_ROUTE,
             DestinationRoutes.SEARCH_SCREEN_ROUTE,
-            DestinationRoutes.CART_SCREEN_ROUTE,
             DestinationRoutes.SETTING_SCREEN_ROUTE,
             DestinationRoutes.ORDER_SCREEN_ROUTE,
         )
