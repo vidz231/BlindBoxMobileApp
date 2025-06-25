@@ -24,8 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.vidz.base.navigation.DestinationRoutes
-import com.vidz.order.model.OrderItem
-import com.vidz.order.model.OrderStatus
+import com.vidz.domain.model.OrderDto
+import com.vidz.domain.model.OrderStatus
 import java.text.NumberFormat
 import java.util.*
 
@@ -38,6 +38,15 @@ fun OrderScreen(
     onShowSnackbar: ((String) -> Unit)? = null
 ) {
     val uiState = orderViewModel.uiState.collectAsStateWithLifecycle()
+    val isAuthenticated by orderViewModel.isAuthenticated.collectAsState()
+
+    LaunchedEffect(isAuthenticated) {
+        if (!isAuthenticated) {
+            navController.navigate(DestinationRoutes.ROOT_LOGIN_SCREEN_ROUTE) {
+                popUpTo(DestinationRoutes.ORDER_SCREEN_ROUTE) { inclusive = true }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         orderViewModel.setOnNavigateToOrderDetail { orderId ->
@@ -93,7 +102,7 @@ fun OrderScreen(
                                 order = order,
                                 onClick = {
                                     orderViewModel.onTriggerEvent(
-                                        OrderViewModel.OrderViewEvent.ViewOrderDetails(order.id)
+                                        OrderViewModel.OrderViewEvent.ViewOrderDetails(order.orderId.toString())
                                     )
                                 }
                             )
@@ -107,7 +116,7 @@ fun OrderScreen(
 
 @Composable
 fun OrderItemCard(
-    order: OrderItem,
+    order: OrderDto,
     onClick: () -> Unit
 ) {
     Card(
@@ -128,45 +137,37 @@ fun OrderItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = order.orderNumber,
+                    text = "ORD-${order.orderId}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                StatusChip(status = order.status)
+                StatusChip(status = order.latestStatus)
             }
-            
             Spacer(modifier = Modifier.height(8.dp))
-            
             Text(
-                text = "Ngày đặt: ${order.date}",
+                text = "Ngày đặt: ${order.createdAt}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
             Spacer(modifier = Modifier.height(8.dp))
-            
-            order.items.forEach { item ->
+            order.orderDetails.forEach { item ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${item.name} x${item.quantity}",
+                        text = "${item.sku.name} x${item.quantity}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = formatCurrency(item.price * item.quantity),
+                        text = formatCurrency(item.unitPrice * item.quantity),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
-            
             Spacer(modifier = Modifier.height(8.dp))
-            
             Divider()
-            
             Spacer(modifier = Modifier.height(8.dp))
-            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -178,7 +179,7 @@ fun OrderItemCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = formatCurrency(order.totalAmount),
+                    text = formatCurrency(order.finalTotal),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -190,25 +191,19 @@ fun OrderItemCard(
 
 @Composable
 fun StatusChip(status: OrderStatus) {
-    val (backgroundColor, textColor) = when (status) {
-        OrderStatus.PENDING -> MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
-        OrderStatus.PROCESSING -> MaterialTheme.colorScheme.secondary to MaterialTheme.colorScheme.onSecondary
-        OrderStatus.COMPLETED -> MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
-        OrderStatus.CANCELLED -> MaterialTheme.colorScheme.error to MaterialTheme.colorScheme.onError
+    val (backgroundColor, textColor, label) = when (status) {
+        is OrderStatus.Created -> Triple(MaterialTheme.colorScheme.tertiary, MaterialTheme.colorScheme.onTertiary, "Chờ xác nhận")
+        is OrderStatus.Preparing, is OrderStatus.ReadyForPickup, is OrderStatus.Shipping -> Triple(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.onSecondary, "Đang xử lý/giao hàng")
+        is OrderStatus.Completed, is OrderStatus.Delivered, is OrderStatus.Received -> Triple(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, "Hoàn thành")
+        is OrderStatus.Canceled, is OrderStatus.PaymentFailed, is OrderStatus.PaymentExpired -> Triple(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, "Đã hủy/Thanh toán thất bại")
     }
-
     Surface(
         modifier = Modifier,
         shape = RoundedCornerShape(16.dp),
         color = backgroundColor
     ) {
         Text(
-            text = when (status) {
-                OrderStatus.PENDING -> "PENDING"
-                OrderStatus.PROCESSING -> "PROCESSING"
-                OrderStatus.COMPLETED -> "COMPLETED"
-                OrderStatus.CANCELLED -> "CANCELLED"
-            },
+            text = label,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
             color = textColor

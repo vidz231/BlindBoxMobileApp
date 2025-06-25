@@ -1,4 +1,4 @@
-package com.vidz.order.detail
+package com.vidz.order_detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,7 +10,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.vidz.order.model.OrderProductItem
+import com.vidz.domain.model.OrderDto
+import com.vidz.domain.model.OrderDetail
+import com.vidz.domain.model.OrderStatus
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -18,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.vidz.order.model.OrderItem
-import com.vidz.order.model.OrderStatus
 import java.text.NumberFormat
 import java.util.*
 
@@ -75,7 +75,7 @@ fun OrderDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
-                            OrderInfoSection(order = uiState.value.order!!)
+                            OrderInfoSection(order = uiState.value.order!!, orderDetailViewModel = orderDetailViewModel)
                         }
                         
                         item {
@@ -86,7 +86,7 @@ fun OrderDetailScreen(
                             OrderSummarySection(order = uiState.value.order!!)
                         }
                         
-                        if (uiState.value.order!!.status == OrderStatus.PENDING) {
+                        if (uiState.value.order!!.latestStatus == OrderStatus.Preparing) {
                             item {
                                 CancelOrderButton(
                                     onCancelClick = {
@@ -105,7 +105,7 @@ fun OrderDetailScreen(
 }
 
 @Composable
-private fun OrderInfoSection(order: OrderItem) {
+private fun OrderInfoSection(order: OrderDto, orderDetailViewModel: OrderDetailViewModel = hiltViewModel()) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -123,19 +123,17 @@ private fun OrderInfoSection(order: OrderItem) {
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            InfoRow("Mã đơn hàng", order.orderNumber)
-            InfoRow("Ngày đặt", order.date)
-            InfoRow("Trạng thái", getStatusText(order.status))
-            order.shippingAddress?.let { InfoRow("Địa chỉ giao hàng", it) }
-            order.paymentMethod?.let { InfoRow("Phương thức thanh toán", it) }
-            order.estimatedDeliveryDate?.let { InfoRow("Ngày giao hàng dự kiến", it) }
-            order.note?.let { InfoRow("Ghi chú", it) }
+            InfoRow("Mã đơn hàng", "ORD-${order.orderId}")
+            InfoRow("Ngày đặt", order.createdAt)
+            InfoRow("Trạng thái", getStatusTextVi(order.latestStatus))
+            if (order.shippingInfo.address.isNotBlank()) InfoRow("Địa chỉ giao hàng", order.shippingInfo.address)
+            InfoRow("Phương thức thanh toán", paymentMethodToString(order.transaction.paymentMethod))
         }
     }
 }
 
 @Composable
-private fun OrderItemsSection(order: OrderItem) {
+private fun OrderItemsSection(order: OrderDto) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -153,9 +151,9 @@ private fun OrderItemsSection(order: OrderItem) {
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            order.items.forEach { item ->
+            order.orderDetails.forEach { item ->
                 OrderItemRow(item = item)
-                if (item != order.items.last()) {
+                if (item != order.orderDetails.last()) {
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
                 }
             }
@@ -164,7 +162,7 @@ private fun OrderItemsSection(order: OrderItem) {
 }
 
 @Composable
-private fun OrderSummarySection(order: OrderItem) {
+private fun OrderSummarySection(order: OrderDto) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
@@ -191,7 +189,7 @@ private fun OrderSummarySection(order: OrderItem) {
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = formatCurrency(order.totalAmount),
+                    text = formatCurrency(order.finalTotal),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -202,7 +200,7 @@ private fun OrderSummarySection(order: OrderItem) {
 }
 
 @Composable
-private fun OrderItemRow(item: OrderProductItem) {
+private fun OrderItemRow(item: OrderDetail) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -210,7 +208,7 @@ private fun OrderItemRow(item: OrderProductItem) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.name,
+                text = item.sku.name,
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
@@ -220,7 +218,7 @@ private fun OrderItemRow(item: OrderProductItem) {
             )
         }
         Text(
-            text = formatCurrency(item.price * item.quantity),
+            text = formatCurrency(item.unitPrice * item.quantity),
             style = MaterialTheme.typography.bodyLarge
         )
     }
@@ -259,16 +257,20 @@ private fun CancelOrderButton(onCancelClick: () -> Unit) {
     }
 }
 
-private fun getStatusText(status: OrderStatus): String {
-    return when (status) {
-        OrderStatus.PENDING -> "Chờ xử lý"
-        OrderStatus.PROCESSING -> "Đang xử lý"
-        OrderStatus.COMPLETED -> "Hoàn thành"
-        OrderStatus.CANCELLED -> "Đã hủy"
-    }
-}
-
 private fun formatCurrency(amount: Double): String {
     val format = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     return format.format(amount)
+}
+
+private fun getStatusTextVi(status: OrderStatus): String = when (status) {
+    is OrderStatus.Created -> "Chờ xác nhận"
+    is OrderStatus.Preparing, is OrderStatus.ReadyForPickup, is OrderStatus.Shipping -> "Đang xử lý/giao hàng"
+    is OrderStatus.Completed, is OrderStatus.Delivered, is OrderStatus.Received -> "Hoàn thành"
+    is OrderStatus.Canceled, is OrderStatus.PaymentFailed, is OrderStatus.PaymentExpired -> "Đã hủy/Thanh toán thất bại"
+}
+
+private fun paymentMethodToString(pm: com.vidz.domain.model.PaymentMethod): String = when (pm) {
+    is com.vidz.domain.model.PaymentMethod.InternalWallet -> "Ví nội bộ"
+    is com.vidz.domain.model.PaymentMethod.Paypal -> "Paypal"
+    is com.vidz.domain.model.PaymentMethod.Vnpay -> "Vnpay"
 } 
