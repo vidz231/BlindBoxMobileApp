@@ -1,5 +1,6 @@
 package com.vidz.cart
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -64,6 +65,7 @@ fun CartScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Log.d("CartScreen", "Cart items count: ${uiState.cartItems.size}")
             Text(
                 text = "My Cart",
                 style = MaterialTheme.typography.headlineMedium,
