@@ -12,13 +12,18 @@ import com.vidz.domain.model.OrderDto
 import com.vidz.domain.model.OrderStatus
 import com.vidz.domain.usecase.GetOrdersUseCase
 import com.vidz.domain.Result
+import com.vidz.domain.usecase.IsAuthenticatedUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
-    private val getOrdersUseCase: GetOrdersUseCase
+    private val getOrdersUseCase: GetOrdersUseCase,
+    private val isAuthenticatedUseCase: IsAuthenticatedUseCase
 ) : BaseViewModel<
         OrderViewModel.OrderViewEvent,
         OrderViewModel.OrderViewState,
@@ -27,12 +32,19 @@ class OrderViewModel @Inject constructor(
 ) {
 
     private var onNavigateToOrderDetail: ((String) -> Unit)? = null
+    private val _isAuthenticated = MutableStateFlow(true)
+    val isAuthenticated: StateFlow<Boolean> get() = _isAuthenticated
 
     fun setOnNavigateToOrderDetail(callback: (String) -> Unit) {
         onNavigateToOrderDetail = callback
     }
 
     init {
+        viewModelScope.launch {
+            isAuthenticatedUseCase().collectLatest {
+                _isAuthenticated.value = it
+            }
+        }
         loadOrders()
     }
 

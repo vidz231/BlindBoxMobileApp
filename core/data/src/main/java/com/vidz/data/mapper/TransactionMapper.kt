@@ -8,8 +8,9 @@ import com.vidz.domain.model.Transaction
 import com.vidz.domain.model.TransactionType
 import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.model.TransactionStatus
+import javax.inject.Inject
 
-class TransactionMapper(
+class TransactionMapper @Inject constructor(
     private val accountMapper: AccountMapper
 ) : BaseRemoteMapper<Transaction, TransactionDto> {
 

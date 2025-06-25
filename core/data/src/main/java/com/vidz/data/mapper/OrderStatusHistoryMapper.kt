@@ -3,8 +3,9 @@ package com.vidz.data.mapper
 import com.vidz.data.server.retrofit.dto.OrderStatusHistoryDto
 import com.vidz.domain.model.OrderStatusHistory
 import com.vidz.domain.model.OrderStatus
+import javax.inject.Inject
 
-class OrderStatusHistoryMapper : BaseRemoteMapper<OrderStatusHistory, OrderStatusHistoryDto> {
+class OrderStatusHistoryMapper @Inject constructor() : BaseRemoteMapper<OrderStatusHistory, OrderStatusHistoryDto> {
 
     override fun toDomain(external: OrderStatusHistoryDto): OrderStatusHistory {
         return OrderStatusHistory(

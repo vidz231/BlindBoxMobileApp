@@ -8,9 +8,6 @@ import com.fpl.base.viewmodel.BaseViewModel
 import com.vidz.domain.Init
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
-import com.vidz.order.model.OrderItem
-import com.vidz.order.model.OrderProductItem
-import com.vidz.order.model.OrderStatus
 import com.vidz.domain.usecase.GetOrderByIdUseCase
 import com.vidz.domain.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +17,7 @@ import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.model.OrderStatus as DomainOrderStatus
 import com.vidz.domain.model.OrderDto
 import com.vidz.domain.model.OrderDetail
+import com.vidz.domain.model.OrderStatus
 
 @HiltViewModel
 class OrderDetailViewModel @Inject constructor(
@@ -37,24 +35,30 @@ class OrderDetailViewModel @Inject constructor(
         is PaymentMethod.Vnpay -> "Vnpay"
     }
 
-    private fun mapOrderStatus(status: DomainOrderStatus): OrderStatus = when(status) {
-        is DomainOrderStatus.Created -> OrderStatus.PENDING
-        is DomainOrderStatus.Preparing -> OrderStatus.PROCESSING
-        is DomainOrderStatus.PaymentFailed -> OrderStatus.CANCELLED
-        is DomainOrderStatus.PaymentExpired -> OrderStatus.CANCELLED
-        is DomainOrderStatus.Canceled -> OrderStatus.CANCELLED
-        is DomainOrderStatus.ReadyForPickup -> OrderStatus.PROCESSING
-        is DomainOrderStatus.Shipping -> OrderStatus.PROCESSING
-        is DomainOrderStatus.Delivered -> OrderStatus.COMPLETED
-        is DomainOrderStatus.Received -> OrderStatus.COMPLETED
-        is DomainOrderStatus.Completed -> OrderStatus.COMPLETED
+    private fun mapOrderStatus(status: DomainOrderStatus): DomainOrderStatus = when(status) {
+        is DomainOrderStatus.Created -> DomainOrderStatus.Created
+        is DomainOrderStatus.Preparing -> DomainOrderStatus.Preparing
+        is DomainOrderStatus.PaymentFailed -> DomainOrderStatus.PaymentFailed
+        is DomainOrderStatus.PaymentExpired -> DomainOrderStatus.PaymentExpired
+        is DomainOrderStatus.Canceled -> DomainOrderStatus.Canceled
+        is DomainOrderStatus.ReadyForPickup -> DomainOrderStatus.ReadyForPickup
+        is DomainOrderStatus.Shipping -> DomainOrderStatus.Shipping
+        is DomainOrderStatus.Delivered -> DomainOrderStatus.Delivered
+        is DomainOrderStatus.Received -> DomainOrderStatus.Received
+        is DomainOrderStatus.Completed -> DomainOrderStatus.Completed
     }
 
-    fun getStatusTextVi(status: OrderStatus): String = when(status) {
-        OrderStatus.PENDING -> "Chờ xác nhận"
-        OrderStatus.PROCESSING -> "Đang xử lý/giao hàng"
-        OrderStatus.COMPLETED -> "Hoàn thành"
-        OrderStatus.CANCELLED -> "Đã hủy/Thanh toán thất bại"
+    fun getStatusTextVi(status: DomainOrderStatus): String = when(status) {
+        DomainOrderStatus.Created -> "Chờ xác nhận"
+        DomainOrderStatus.Preparing -> "Đang xử lý/giao hàng"
+        DomainOrderStatus.Completed -> "Hoàn thành"
+        DomainOrderStatus.Canceled -> "Đã hủy/Thanh toán thất bại"
+        OrderStatus.Delivered -> TODO()
+        OrderStatus.PaymentExpired -> TODO()
+        OrderStatus.PaymentFailed -> TODO()
+        OrderStatus.ReadyForPickup -> TODO()
+        OrderStatus.Received -> TODO()
+        OrderStatus.Shipping -> TODO()
     }
 
     fun loadOrderDetail(orderId: String) {
@@ -90,12 +94,11 @@ class OrderDetailViewModel @Inject constructor(
             viewModelState.value = viewModelState.value.copy(isLoading = true)
             // TODO: Implement cancel order logic
             kotlinx.coroutines.delay(1000)
-            
             val currentOrder = viewModelState.value.order
             if (currentOrder != null) {
                 viewModelState.value = viewModelState.value.copy(
                     isLoading = false,
-                    order = currentOrder.copy(status = OrderStatus.CANCELLED),
+                    order = currentOrder.copy(latestStatus = DomainOrderStatus.Canceled),
                     isCancelled = true
                 )
             }
@@ -106,7 +109,7 @@ class OrderDetailViewModel @Inject constructor(
         when (event) {
             is OrderDetailViewEvent.CancelOrder -> cancelOrder()
             is OrderDetailViewEvent.RefreshOrder -> {
-                viewModelState.value.order?.id?.let { loadOrderDetail(it) }
+                viewModelState.value.order?.orderId?.let { loadOrderDetail(it.toString()) }
             }
         }
     }
@@ -154,7 +157,7 @@ data class OrderItem(
     val id: String,
     val orderNumber: String,
     val date: String,
-    val status: OrderStatus,
+    val status: DomainOrderStatus,
     val totalAmount: Double,
     val items: List<OrderProductItem>,
     val shippingAddress: String,

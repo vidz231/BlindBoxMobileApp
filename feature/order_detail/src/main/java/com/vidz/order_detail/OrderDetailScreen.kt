@@ -86,7 +86,7 @@ fun OrderDetailScreen(
                             OrderSummarySection(order = uiState.value.order!!)
                         }
                         
-                        if (uiState.value.order!!.status == OrderStatus.PENDING) {
+                        if (uiState.value.order!!.latestStatus == OrderStatus.Preparing) {
                             item {
                                 CancelOrderButton(
                                     onCancelClick = {
@@ -123,13 +123,11 @@ private fun OrderInfoSection(order: OrderDto, orderDetailViewModel: OrderDetailV
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            InfoRow("Mã đơn hàng", order.orderNumber)
-            InfoRow("Ngày đặt", order.date)
-            InfoRow("Trạng thái", orderDetailViewModel.getStatusTextVi(order.status))
-            order.shippingAddress?.let { InfoRow("Địa chỉ giao hàng", it) }
-            order.paymentMethod?.let { InfoRow("Phương thức thanh toán", it) }
-            order.estimatedDeliveryDate?.let { InfoRow("Ngày giao hàng dự kiến", it) }
-            order.note?.let { InfoRow("Ghi chú", it) }
+            InfoRow("Mã đơn hàng", "ORD-${order.orderId}")
+            InfoRow("Ngày đặt", order.createdAt)
+            InfoRow("Trạng thái", getStatusTextVi(order.latestStatus))
+            if (order.shippingInfo.address.isNotBlank()) InfoRow("Địa chỉ giao hàng", order.shippingInfo.address)
+            InfoRow("Phương thức thanh toán", paymentMethodToString(order.transaction.paymentMethod))
         }
     }
 }
@@ -191,7 +189,7 @@ private fun OrderSummarySection(order: OrderDto) {
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = formatCurrency(order.totalAmount),
+                    text = formatCurrency(order.finalTotal),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -210,7 +208,7 @@ private fun OrderItemRow(item: OrderDetail) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.name,
+                text = item.sku.name,
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
@@ -262,4 +260,17 @@ private fun CancelOrderButton(onCancelClick: () -> Unit) {
 private fun formatCurrency(amount: Double): String {
     val format = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     return format.format(amount)
+}
+
+private fun getStatusTextVi(status: OrderStatus): String = when (status) {
+    is OrderStatus.Created -> "Chờ xác nhận"
+    is OrderStatus.Preparing, is OrderStatus.ReadyForPickup, is OrderStatus.Shipping -> "Đang xử lý/giao hàng"
+    is OrderStatus.Completed, is OrderStatus.Delivered, is OrderStatus.Received -> "Hoàn thành"
+    is OrderStatus.Canceled, is OrderStatus.PaymentFailed, is OrderStatus.PaymentExpired -> "Đã hủy/Thanh toán thất bại"
+}
+
+private fun paymentMethodToString(pm: com.vidz.domain.model.PaymentMethod): String = when (pm) {
+    is com.vidz.domain.model.PaymentMethod.InternalWallet -> "Ví nội bộ"
+    is com.vidz.domain.model.PaymentMethod.Paypal -> "Paypal"
+    is com.vidz.domain.model.PaymentMethod.Vnpay -> "Vnpay"
 } 
