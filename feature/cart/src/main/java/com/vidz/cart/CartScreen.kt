@@ -19,10 +19,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.vidz.base.components.CartItemComponent
 import com.vidz.base.components.PrimaryButton
+import com.vidz.base.components.TopAppBarWithBack
 
 @Composable
 fun CartScreen(
     navController: NavController,
+    onBackClick: () -> Unit,
     viewModel: CartViewModel = hiltViewModel()
 ) {
     //region Define Var
@@ -48,47 +50,45 @@ fun CartScreen(
     }
 
     val onCheckout = {
-        // TODO: Navigate to checkout screen
-        // navController.navigate("checkout")
+        navController.navigate("checkout?checkoutType=FROM_CART")
     }
     //endregion
 
     //region ui
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Log.d("CartScreen", "Cart items count: ${uiState.cartItems.size}")
-            Text(
-                text = "My Cart",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            
-            if (uiState.cartItems.isNotEmpty()) {
-                TextButton(
-                    onClick = onClearCart,
-                    enabled = !uiState.isClearingCart
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Clear All")
-                }
-            }
-        }
+        TopAppBarWithBack(
+            title = "Cart",
+            onBackClick = onBackClick
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Clear All Button (if items exist)
+            if (uiState.cartItems.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = onClearCart,
+                        enabled = !uiState.isClearingCart
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Clear All")
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
         when {
             uiState.isLoading -> {
@@ -221,6 +221,7 @@ fun CartScreen(
                 )
             }
         }
+    }
     }
 
     //region Dialog and Sheet

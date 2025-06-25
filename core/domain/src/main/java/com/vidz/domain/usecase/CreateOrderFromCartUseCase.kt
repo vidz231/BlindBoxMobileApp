@@ -3,7 +3,7 @@ package com.vidz.domain.usecase
 import com.vidz.domain.Result
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
-import com.vidz.domain.model.OrderDto as Order
+import com.vidz.domain.model.CreateOrderResult
 import com.vidz.domain.repository.CartRepository
 import com.vidz.domain.repository.OrderDetailRequest
 import com.vidz.domain.repository.OrderRepository
@@ -20,7 +20,7 @@ class CreateOrderFromCartUseCase @Inject constructor(
         accountId: Long,
         shippingInfoId: Long,
         voucherId: Long? = null
-    ): Flow<Result<Order>> = flow {
+    ): Flow<Result<CreateOrderResult>> = flow {
         // Get current cart items
         val cartItems = cartRepository.observeCartItems().first()
         

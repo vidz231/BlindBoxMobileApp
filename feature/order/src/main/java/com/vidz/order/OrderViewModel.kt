@@ -8,15 +8,23 @@ import com.fpl.base.viewmodel.BaseViewModel
 import com.vidz.domain.Init
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
-import com.vidz.order.model.OrderItem
-import com.vidz.order.model.OrderProductItem
-import com.vidz.order.model.OrderStatus
+import com.vidz.domain.model.OrderDto
+import com.vidz.domain.model.OrderStatus
+import com.vidz.domain.usecase.GetOrdersUseCase
+import com.vidz.domain.Result
+import com.vidz.domain.usecase.IsAuthenticatedUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderViewModel @Inject constructor() : BaseViewModel<
+class OrderViewModel @Inject constructor(
+    private val getOrdersUseCase: GetOrdersUseCase,
+    private val isAuthenticatedUseCase: IsAuthenticatedUseCase
+) : BaseViewModel<
         OrderViewModel.OrderViewEvent,
         OrderViewModel.OrderViewState,
         OrderViewModel.OrderViewModelState>(
@@ -24,54 +32,47 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
 ) {
 
     private var onNavigateToOrderDetail: ((String) -> Unit)? = null
+    private val _isAuthenticated = MutableStateFlow(true)
+    val isAuthenticated: StateFlow<Boolean> get() = _isAuthenticated
 
     fun setOnNavigateToOrderDetail(callback: (String) -> Unit) {
         onNavigateToOrderDetail = callback
     }
 
     init {
+        viewModelScope.launch {
+            isAuthenticatedUseCase().collectLatest {
+                _isAuthenticated.value = it
+            }
+        }
         loadOrders()
     }
 
-    private fun loadOrders() {
+    private fun loadOrders(page: Int = 0, size: Int = 10) {
         viewModelScope.launch {
-            viewModelState.value = viewModelState.value.copy(isLoading = true)
-            // TODO: Implement order loading logic
-            // For now, we'll just simulate loading
-            kotlinx.coroutines.delay(1000)
-            viewModelState.value = viewModelState.value.copy(
-                isLoading = false,
-                orders = listOf(
-                    OrderItem(
-                        id = "1",
-                        orderNumber = "ORD-001",
-                        date = "2024-03-20",
-                        status = OrderStatus.PENDING,
-                        totalAmount = 150000.0,
-                        items = listOf(
-                            OrderProductItem(
-                                name = "Blind Box A",
-                                quantity = 2,
-                                price = 75000.0
-                            )
+            val currentState = viewModelState.value
+            viewModelState.value = currentState.copy(isLoading = true, error = null)
+            getOrdersUseCase.invoke(page, size).collect { result ->
+                when (result) {
+                    is Success -> {
+                        val orders = result.data // List<OrderDto>
+                        viewModelState.value = currentState.copy(
+                            isLoading = false,
+                            orders = orders,
+                            error = null
                         )
-                    ),
-                    OrderItem(
-                        id = "2",
-                        orderNumber = "ORD-002",
-                        date = "2024-03-19",
-                        status = OrderStatus.COMPLETED,
-                        totalAmount = 250000.0,
-                        items = listOf(
-                            OrderProductItem(
-                                name = "Blind Box B",
-                                quantity = 1,
-                                price = 250000.0
-                            )
+                    }
+                    is ServerError -> {
+                        viewModelState.value = currentState.copy(
+                            isLoading = false,
+                            error = result.message ?: "Đã có lỗi xảy ra"
                         )
-                    )
-                )
-            )
+                    }
+                    is Init -> {
+                        viewModelState.value = currentState.copy(isLoading = false)
+                    }
+                }
+            }
         }
     }
 
@@ -94,7 +95,7 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
     data class OrderViewModelState(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val orders: List<OrderItem> = emptyList()
+        val orders: List<OrderDto> = emptyList()
     ) : ViewModelState() {
         override fun toUiState(): ViewState = OrderViewState(
             isLoading = isLoading,
@@ -107,6 +108,6 @@ class OrderViewModel @Inject constructor() : BaseViewModel<
     data class OrderViewState(
         val isLoading: Boolean,
         val error: String?,
-        val orders: List<OrderItem>
+        val orders: List<OrderDto>
     ) : ViewState()
 } 

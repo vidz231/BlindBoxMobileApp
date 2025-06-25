@@ -4,63 +4,76 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Created by FPL on 08/01/2025.
+ * Updated with Shopee Vietnam style colors
  */
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 
+// Shopee Vietnam Brand Colors
+val ShopeeOrange = Color(0xFFFF5722) // Primary brand color
+val ShopeeOrangeLight = Color(0xFFFF7043)
+val ShopeeOrangeDark = Color(0xFFE64A19)
+val ShopeeRed = Color(0xFFE91E63) // For promotions/sales
+val ShopeeRedLight = Color(0xFFEC407A)
+val ShopeeRedDark = Color(0xFFC2185B)
+val ShopeeBlue = Color(0xFF2196F3) // For trust/security
+val ShopeeGreen = Color(0xFF4CAF50) // For success/orders
+val ShopeeYellow = Color(0xFFFFC107) // For ratings/highlights
+val ShopeePurple = Color(0xFF9C27B0) // For premium features
+
 //val DarkSystemUiBackgroundColor = Color(0xFF0D0D0C)
 val DarkSystemUiBackgroundColor = Color(0xFF000000)
-val LightSystemUiBackgroundColor = Color(0xFFFAFAFA)
+val LightSystemUiBackgroundColor = Color(0xFFFFFBF5) // Warmer white for e-commerce
 
-// Base
-val LightPrimaryColor = Color(0xFF0D0D0C)
-val DarkPrimaryColor = Color(0xFFFAFAFA)
+// Base - Updated for Shopee style
+val LightPrimaryColor = ShopeeOrange // Shopee brand orange
+val DarkPrimaryColor = ShopeeOrangeLight
 
 val LightOnPrimaryColor = Color(0xFFFFFFFF)
 val DarkOnPrimaryColor = Color(0xFF0D0D0C)
 
-val LightPrimaryContainerColor = Color(0xFFF5F5F4)
-val DarkPrimaryContainerColor = Color(0xFF1B1A19)
+val LightPrimaryContainerColor = Color(0xFFFFF3E0) // Light orange container
+val DarkPrimaryContainerColor = Color(0xFF4E2A1A) // Dark orange container
 
-val LightOnPrimaryContainerColor = Color(0xFF0D0D0C)
-val DarkOnPrimaryContainerColor = Color(0xFFF5F5F4)
+val LightOnPrimaryContainerColor = ShopeeOrangeDark
+val DarkOnPrimaryContainerColor = Color(0xFFFFF3E0)
 
-val LightSecondaryColor = Color(0xFFEFF0F0)
-val DarkSecondaryColor = Color(0xFF1B1A19)
+val LightSecondaryColor = ShopeeRed // Secondary action color
+val DarkSecondaryColor = ShopeeRedLight
 
-val LightOnSecondaryColor = Color(0xFF1B1A19)
+val LightOnSecondaryColor = Color(0xFFFFFFFF)
 val DarkOnSecondaryColor = Color(0xFFFFFFFF)
 
-val LightSecondaryContainerColor = Color(0xFFEFF0F0)
-val DarkSecondaryContainerColor = Color(0xFF2C2B2B)
+val LightSecondaryContainerColor = Color(0xFFFCE4EC) // Light pink container
+val DarkSecondaryContainerColor = Color(0xFF4A1C2C)
 
-val LightOnSecondaryContainerColor = Color(0xFF1B1A19)
-val DarkOnSecondaryContainerColor = Color(0xFFFFFFFF)
+val LightOnSecondaryContainerColor = ShopeeRedDark
+val DarkOnSecondaryContainerColor = Color(0xFFFCE4EC)
 
-val LightTertiaryColor = Color(0xFFFFC414)
-val DarkTertiaryColor = Color(0xFFFFC414)
+val LightTertiaryColor = ShopeeYellow // For highlights and ratings
+val DarkTertiaryColor = ShopeeYellow
 
 val LightOnTertiaryColor = Color(0xFF0D0D0C)
 val DarkOnTertiaryColor = Color(0xFF0D0D0C)
 
-val LightTertiaryContainerColor = Color(0xFFFFF4D3)
-val DarkTertiaryContainerColor = Color(0xFF251A00)
+val LightTertiaryContainerColor = Color(0xFFFFF8E1) // Light yellow container
+val DarkTertiaryContainerColor = Color(0xFF3E2723)
 
-val LightOnTertiaryContainerColor = Color(0xFF251A00)
-val DarkOnTertiaryContainerColor = Color(0xFFFFFCF5)
+val LightOnTertiaryContainerColor = Color(0xFF3E2723)
+val DarkOnTertiaryContainerColor = Color(0xFFFFF8E1)
 
-val LightErrorColor = Color(0xFFBD0E1F)
-val DarkErrorColor = Color(0xFFE13034)
+val LightErrorColor = Color(0xFFD32F2F) // Brighter error color
+val DarkErrorColor = Color(0xFFE57373)
 
 val LightOnErrorColor = Color(0xFFFFFFFF)
 val DarkOnErrorColor = Color(0xFFFFFFFF)
 
-val LightErrorContainerColor = Color(0xFFFFEDEB)
-val DarkErrorContainerColor = Color(0xFF410004)
+val LightErrorContainerColor = Color(0xFFFFEBEE)
+val DarkErrorContainerColor = Color(0xFF4A0E0E)
 
-val LightOnErrorContainerColor = Color(0xFF930012)
-val DarkOnErrorContainerColor = Color(0xFFffffff)
+val LightOnErrorContainerColor = Color(0xFFB71C1C)
+val DarkOnErrorContainerColor = Color(0xFFFFEBEE)
 
 val LightInverseSurfaceColor = Color(0xFF2C2B2B)
 val DarkInverseSurfaceColor = Color(0xFFFFFFFF)
@@ -68,79 +81,93 @@ val DarkInverseSurfaceColor = Color(0xFFFFFFFF)
 val LightOnInverseSurfaceColor = Color(0xFFFFFFFF)
 val DarkOnInverseSurfaceColor = Color(0xFF0D0D0C)
 
-val LightInversePrimaryColor = Color(0xFFF5F5F4)
-val DarkInversePrimaryColor = Color(0xFF0D0D0C)
+val LightInversePrimaryColor = Color(0xFFFFF3E0)
+val DarkInversePrimaryColor = ShopeeOrangeDark
 
-val LightOutlineColor = Color(0xFF959595)
-val DarkOutlineColor = Color(0xFF7C7C7C)
+val LightOutlineColor = Color(0xFFBDBDBD) // Softer outline
+val DarkOutlineColor = Color(0xFF757575)
 
-val LightOutlineVariantColor = Color(0xFFEFF0F0)
-val DarkOutlineVariantColor = Color(0xFF2C2B2B)
+val LightOutlineVariantColor = Color(0xFFEEEEEE)
+val DarkOutlineVariantColor = Color(0xFF424242)
 
-val LightSurfaceColor = Color(0xFFEFF0F0)
-val DarkSurfaceColor = Color(0xFF0D0D0C)
+val LightSurfaceColor = Color(0xFFFFFBF5) // Warm white surface
+val DarkSurfaceColor = Color(0xFF121212)
 
-val LightSurfaceDimColor = Color(0xFFE5E5E5)
+val LightSurfaceDimColor = Color(0xFFF5F5F5)
 val DarkSurfaceDimColor = Color(0xFF0D0D0C)
 
-val LightSurfaceBrightColor = Color(0xFFFAFAFA)
+val LightSurfaceBrightColor = Color(0xFFFFFFFF)
 val DarkSurfaceBrightColor = Color(0xFF2C2B2B)
 
-val LightSurfaceContainerColor = Color(0xFFF5F5F4)
-val DarkSurfaceContainerColor = Color(0xFF151413)
+val LightSurfaceContainerColor = Color(0xFFFFF8F0) // Slightly tinted surface
+val DarkSurfaceContainerColor = Color(0xFF1A1A1A)
 
-val LightSurfaceContainerHighColor = Color(0xFFFAFAFA)
-val DarkSurfaceContainerHighColor = Color(0xFF1B1A19)
+val LightSurfaceContainerHighColor = Color(0xFFFFFFFF)
+val DarkSurfaceContainerHighColor = Color(0xFF2A2A2A)
 
-val LightOnSurfaceColor = Color(0xFF0d0d0c)
-val DarkOnSurfaceColor = Color(0xFFEFF0F0)
+val LightOnSurfaceColor = Color(0xFF212121) // Darker for better contrast
+val DarkOnSurfaceColor = Color(0xFFEEEEEE)
 
-val LightOnSurfaceVariantColor = Color(0xFF595959)
-val DarkOnSurfaceVariantColor = Color(0xFFC4C4C4)
+val LightOnSurfaceVariantColor = Color(0xFF616161) // Medium gray
+val DarkOnSurfaceVariantColor = Color(0xFFBDBDBD)
 
-// Define custom light and dark mode colors
-val LightPrimaryFixedColor = Color(0xFF0D0D0C)
-val DarkPrimaryFixedColor = Color(0xFF0D0D0C)
+// Shopee-specific colors for UI elements
+val ShopeeSuccess = ShopeeGreen
+val ShopeeWarning = Color(0xFFFF9800)
+val ShopeeInfo = ShopeeBlue
+val ShopeeDanger = ShopeeRed
 
-val LightPrimaryFixedDimColor = Color(0xFF0D0D0C)
-val DarkPrimaryFixedDimColor = Color(0xFF0D0D0C)
+// E-commerce specific colors
+val DiscountRed = Color(0xFFFF1744) // For discount badges
+val SalePrice = Color(0xFFE91E63) // For sale prices
+val OriginalPrice = Color(0xFF9E9E9E) // For crossed-out original prices
+val FreeShipping = Color(0xFF4CAF50) // For free shipping badges
+val Rating = Color(0xFFFFC107) // For star ratings
+val Stock = Color(0xFFFF5722) // For stock indicators
 
-val LightOnPrimaryFixedColor = Color(0xFFF5F5F4)
-val DarkOnPrimaryFixedColor = Color(0xFFF5F5F4)
+// Define custom light and dark mode colors - Updated for Shopee
+val LightPrimaryFixedColor = ShopeeOrange
+val DarkPrimaryFixedColor = ShopeeOrangeLight
 
-val LightOnPrimaryFixedVariantColor = Color(0xFFFFFFFF)
-val DarkOnPrimaryFixedVariantColor = Color(0xFFFFFFFF)
+val LightPrimaryFixedDimColor = ShopeeOrangeDark
+val DarkPrimaryFixedDimColor = ShopeeOrangeDark
 
-val LightSecondaryFixedColor = Color(0xFFEFF0F0)
-val DarkSecondaryFixedColor = Color(0xFF1B1A19)
+val LightOnPrimaryFixedColor = Color(0xFFFFFFFF)
+val DarkOnPrimaryFixedColor = Color(0xFFFFFFFF)
 
-val LightOnSecondaryFixedColor = Color(0xFF1B1A19)
-val DarkOnSecondaryFixedColor = Color(0xFF1B1A19)
+val LightOnPrimaryFixedVariantColor = Color(0xFFFFF3E0)
+val DarkOnPrimaryFixedVariantColor = Color(0xFFFFF3E0)
 
-val LightSecondaryFixedDimColor = Color(0xFFC4C4C4)
-val DarkSecondaryFixedDimColor = Color(0xFFC4C4C4)
+val LightSecondaryFixedColor = ShopeeRed
+val DarkSecondaryFixedColor = ShopeeRedLight
 
-val LightSecondaryFixedVariantColor = Color(0xFF2C2B2B)
-val DarkSecondaryFixedVariantColor = Color(0xFF2C2B2B)
+val LightOnSecondaryFixedColor = Color(0xFFFFFFFF)
+val DarkOnSecondaryFixedColor = Color(0xFFFFFFFF)
 
-val LightTertiaryFixedColor = Color(0xFFFFC414)
-val DarkTertiaryFixedColor = Color(0xFFFFC414)
+val LightSecondaryFixedDimColor = ShopeeRedDark
+val DarkSecondaryFixedDimColor = ShopeeRedDark
 
-val LightTertiaryFixedDimColor = Color(0xFFB68A00)
-val DarkTertiaryFixedDimColor = Color(0xFFB68A00)
+val LightSecondaryFixedVariantColor = Color(0xFFFCE4EC)
+val DarkSecondaryFixedVariantColor = Color(0xFF4A1C2C)
+
+val LightTertiaryFixedColor = ShopeeYellow
+val DarkTertiaryFixedColor = ShopeeYellow
+
+val LightTertiaryFixedDimColor = Color(0xFFFFB300)
+val DarkTertiaryFixedDimColor = Color(0xFFFFB300)
 
 val LightOnTertiaryFixedColor = Color(0xFF0D0D0C)
 val DarkOnTertiaryFixedColor = Color(0xFF0D0D0C)
 
-val LightOnTertiaryFixedVariantColor = Color(0xFF5A4300)
-val DarkOnTertiaryFixedVariantColor = Color(0xFF5A4300)
+val LightOnTertiaryFixedVariantColor = Color(0xFF3E2723)
+val DarkOnTertiaryFixedVariantColor = Color(0xFF3E2723)
 
-val LightOnInverseSurfaceVariantColor = Color(0xFFE5E5E5)
-val DarkOnInverseSurfaceVariantColor = Color(0xFF595959)
+val LightOnInverseSurfaceVariantColor = Color(0xFFF5F5F5)
+val DarkOnInverseSurfaceVariantColor = Color(0xFF616161)
 
+// Keep existing utility colors
 val SkeletonColor = Color(0xFFF2F2F2)
-
-val ChipColor = Color(0xFFF6F6F6)
+val ChipColor = Color(0xFFFFF8F0) // Slightly tinted for warmth
 
 /*
 Opacity Hex

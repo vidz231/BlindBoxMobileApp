@@ -3,8 +3,11 @@ package com.vidz.data.mapper
 import com.vidz.data.server.retrofit.dto.OrderDetailDto
 import com.vidz.domain.model.OrderDetail
 import com.vidz.domain.model.Slot
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class OrderDetailMapper(
+@Singleton
+class OrderDetailMapper @Inject constructor(
     private val stockKeepingUnitMapper: StockKeepingUnitMapper,
     private val promotionalCampaignMapper: PromotionalCampaignMapper,
 ) : BaseRemoteMapper<OrderDetail, OrderDetailDto> {

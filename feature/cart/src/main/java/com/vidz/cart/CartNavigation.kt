@@ -16,6 +16,9 @@ fun NavGraphBuilder.addCartNavGraph(
                exitTransition = { ExitTransition.None },
                popEnterTransition = { EnterTransition.None },
                popExitTransition = { ExitTransition.None }) {
-        CartScreen(navController)
+        CartScreen(
+            navController = navController,
+            onBackClick = { navController.navigateUp() }
+        )
     }
 }
