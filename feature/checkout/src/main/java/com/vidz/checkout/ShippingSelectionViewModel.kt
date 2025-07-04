@@ -13,24 +13,32 @@ import com.vidz.domain.usecase.CreateShippingInfoUseCase
 import com.vidz.domain.usecase.UpdateShippingInfoUseCase
 import com.vidz.domain.usecase.DeleteShippingInfoUseCase
 import com.vidz.domain.usecase.IsAuthenticatedUseCase
+import com.vidz.domain.usecase.GetAutoCompleteUseCase
+import com.vidz.domain.usecase.GetPlaceDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
+import com.vidz.domain.model.map.AutoComplete
+import com.vidz.domain.Success as DomainSuccess
 
 @HiltViewModel
 class ShippingSelectionViewModel @Inject constructor(
     private val getShippingInfosUseCase: GetShippingInfosUseCase,
     private val getShippingInfoByIdUseCase: GetShippingInfoByIdUseCase,
-    private val createShippingInfoUseCase: CreateShippingInfoUseCase,
-    private val updateShippingInfoUseCase: UpdateShippingInfoUseCase,
     private val deleteShippingInfoUseCase: DeleteShippingInfoUseCase,
-    private val isAuthenticatedUseCase: IsAuthenticatedUseCase
+    private val isAuthenticatedUseCase: IsAuthenticatedUseCase,
 ) : BaseViewModel<
         ShippingSelectionViewModel.ShippingSelectionViewEvent,
         ShippingSelectionViewModel.ShippingSelectionViewState,
         ShippingSelectionViewModel.ShippingSelectionViewModelState
         >(ShippingSelectionViewModelState()) {
+
+    companion object {
+        private const val GOONG_API_KEY = "TesaRWQHRzwYYQjCihGynhWLwFWerPe6cECCogVj"
+    }
 
     sealed class ShippingSelectionViewEvent : ViewEvent {
         data object LoadShippingInfos : ShippingSelectionViewEvent()
@@ -244,5 +252,13 @@ class ShippingSelectionViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /**
+     * Currently a no-op to satisfy the call from [ShippingSelectionScreen].
+     * In future this could perform reverse-geocoding to suggest a new address, etc.
+     */
+    fun onMapPointSelected(point: com.mapbox.geojson.Point, context: android.content.Context) {
+        // No action needed for selection list – method retained for API compatibility.
     }
 } 

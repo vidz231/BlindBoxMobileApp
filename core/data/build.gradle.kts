@@ -1,4 +1,3 @@
-import com.vidz.convention.BlindBoxBuildType
 import org.gradle.kotlin.dsl.implementation
 
 plugins {
@@ -16,6 +15,14 @@ android {
         }
     }
 
+    defaultConfig{
+        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${property("MAPBOX_ACCESS_TOKEN")}\"")
+        buildConfigField("String", "GOONG_API_KEY", "\"${property("GOONG_API_KEY")}\"")
+        buildConfigField("String", "GOONG_API_URL", "\"${property("GOONG_API_URL")}\"")
+        buildConfigField("String", "GOONG_MAP_URL", "\"${property("GOONG_MAP_URL")}\"")
+        buildConfigField("String", "GOONG_MAP_KEY", "\"${property("GOONG_MAP_KEY")}\"")
+
+    }
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -42,7 +49,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.datastore)
     implementation(libs.okhttp.logging)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation(libs.okhttp)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.kotlinx.serialization.json)
@@ -52,6 +59,19 @@ dependencies {
     implementation (libs.moshi.kotlin)
     ksp (libs.moshi.kotlin.codegen)
 
+    implementation(libs.play.services.maps)
+
+// Annotation plugin
+    implementation(libs.maps.annotation)
+
+    implementation(libs.android)
+// Gestures plugin
+    implementation(libs.maps.compose)
+//    implementation(libs.mapbox.android.geojson)
+    implementation(libs.mapbox.sdk.geojson)
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:7.4.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-turf:7.4.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-core:7.4.0")
 
 
 }

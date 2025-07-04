@@ -43,6 +43,27 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    @Named("GoongRetrofit")
+    fun provideGoongRetrofit(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): Retrofit {
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+        
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+            
+        return Retrofit.Builder()
+            .client(client)
+            .baseUrl("https://rsapi.goong.io/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
+    @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY

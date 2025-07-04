@@ -93,8 +93,18 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 navController.navigateUp()
             },
             onCreateNewShippingInfo = {
-                // TODO: Navigate to create shipping info screen
-                onShowSnackbar("Create new shipping info - to be implemented")
+                navController.navigate("add_shipping_address")
+            }
+        )
+    }
+
+    // Add Shipping Address Screen
+    composable("add_shipping_address") {
+        AddShippingAddressScreen(
+            onBackClick = { navController.navigateUp() },
+            onShippingAddressAdded = {
+                // After adding, pop back to selection and refresh
+                navController.popBackStack("shipping_selection", inclusive = false)
             }
         )
     }
