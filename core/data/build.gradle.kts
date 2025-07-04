@@ -15,22 +15,40 @@ android {
         }
     }
 
-    defaultConfig{
-        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${property("MAPBOX_ACCESS_TOKEN")}\"")
-        buildConfigField("String", "GOONG_API_KEY", "\"${property("GOONG_API_KEY")}\"")
-        buildConfigField("String", "GOONG_API_URL", "\"${property("GOONG_API_URL")}\"")
-        buildConfigField("String", "GOONG_MAP_URL", "\"${property("GOONG_MAP_URL")}\"")
-        buildConfigField("String", "GOONG_MAP_KEY", "\"${property("GOONG_MAP_KEY")}\"")
 
-    }
     buildTypes {
         debug {
             isMinifyEnabled = false
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://52.163.66.235:8080/api/v1/\""
+                "\"http://52.163.66.235:8080/api/v1/\"",
                 )
+            buildConfigField(
+                "String",
+                "MAPBOX_ACCESS_TOKEN",
+                "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "GOONG_API_KEY",
+                "\"${project.findProperty("GOONG_API_KEY") ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "GOONG_API_URL",
+                "\"${project.findProperty("GOONG_API_URL") ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "GOONG_MAP_URL",
+                "\"${project.findProperty("GOONG_MAP_URL") ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "GOONG_MAP_KEY",
+                "\"${project.findProperty("GOONG_MAP_KEY") ?: ""}\""
+            )
         }
         release {
             isMinifyEnabled = true
