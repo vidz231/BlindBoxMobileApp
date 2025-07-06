@@ -4,15 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +25,7 @@ import com.vidz.base.components.CheckoutItemComponent
 import com.vidz.base.components.CheckoutSummaryComponent
 import com.vidz.base.components.PrimaryButton
 import com.vidz.base.components.TopAppBarWithBack
+import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.model.ShippingInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +37,7 @@ fun CheckoutScreen(
     checkoutType: CheckoutType = CheckoutType.FROM_CART,
     buyNowItems: List<CheckoutItemData>? = null,
     navController: NavController? = null,
+    onShowSnackbar: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier,
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
@@ -69,10 +74,18 @@ fun CheckoutScreen(
     LaunchedEffect(navController) {
         navController?.currentBackStackEntry?.savedStateHandle?.getLiveData<Long>("selected_shipping_info_id")?.observeForever { shippingInfoId ->
             if (shippingInfoId != null && shippingInfoId > 0) {
-                viewModel.loadSelectedShippingInfo()
+                viewModel.loadSelectedShippingInfo(shippingInfoId)
                 // Clear the saved state to prevent re-triggering
                 navController.currentBackStackEntry?.savedStateHandle?.remove<Long>("selected_shipping_info_id")
             }
+        }
+    }
+
+    // Handle snackbar messages
+    LaunchedEffect(uiState.snackbarMessage) {
+        if (uiState.snackbarMessage.isNotEmpty()) {
+            onShowSnackbar?.invoke(uiState.snackbarMessage)
+            viewModel.onTriggerEvent(CheckoutViewModel.CheckoutViewEvent.ClearSnackbarMessage)
         }
     }
 
@@ -100,6 +113,10 @@ fun CheckoutScreen(
 
     val handleCouponRemove = {
         viewModel.onTriggerEvent(CheckoutViewModel.CheckoutViewEvent.RemoveCoupon)
+    }
+
+    val handlePaymentMethodSelect = { paymentMethod: PaymentMethod ->
+        viewModel.onTriggerEvent(CheckoutViewModel.CheckoutViewEvent.SelectPaymentMethod(paymentMethod))
     }
     //endregion
 
@@ -171,7 +188,59 @@ fun CheckoutScreen(
                     }
                 }
 
-
+                // Payment Method Section
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Payment Method",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            val paymentMethods = listOf(
+                                PaymentMethod.Vnpay to "VNPay",
+                                PaymentMethod.Paypal to "PayPal",
+                                PaymentMethod.InternalWallet to "Internal Wallet"
+                            )
+                            
+                            paymentMethods.forEach { (method, name) ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .selectable(
+                                            selected = uiState.selectedPaymentMethod == method,
+                                            onClick = { handlePaymentMethodSelect(method) },
+                                            role = Role.RadioButton
+                                        )
+                                        .padding(vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = uiState.selectedPaymentMethod == method,
+                                        onClick = { handlePaymentMethodSelect(method) }
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.Payment,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = name,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
 
                 // Checkout Items
                 items(uiState.checkoutItems) { item ->

@@ -51,7 +51,6 @@ fun ShippingSelectionScreen(
     val handleConfirmSelection: () -> Unit = {
         selectedShippingInfo?.let { shippingInfo ->
             onShippingInfoSelected(shippingInfo)
-            onBackClick()
         } ?: Unit
     }
 

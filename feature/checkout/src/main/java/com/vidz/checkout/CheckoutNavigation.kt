@@ -74,12 +74,12 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 navController.navigate("shipping_selection")
             },
             onNavigateToPayment = { paymentUrl ->
-                // TODO: Handle payment navigation
-                onShowSnackbar("Redirecting to payment: $paymentUrl")
+                navController.navigate("payment_webview?paymentUrl=${java.net.URLEncoder.encode(paymentUrl, "UTF-8")}")
             },
             checkoutType = if (checkoutType == "BUY_NOW") CheckoutType.BUY_NOW else CheckoutType.FROM_CART,
             buyNowItems = buyNowItems,
-            navController = navController
+            navController = navController,
+            onShowSnackbar = onShowSnackbar
         )
     }
 
@@ -105,6 +105,111 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             onShippingAddressAdded = {
                 // After adding, pop back to selection and refresh
                 navController.popBackStack("shipping_selection", inclusive = false)
+            }
+        )
+    }
+
+    // Payment WebView Screen
+    composable(
+        route = "payment_webview?paymentUrl={paymentUrl}",
+        arguments = listOf(
+            navArgument("paymentUrl") { 
+                type = NavType.StringType 
+            }
+        )
+    ) { backStackEntry ->
+        val paymentUrl = backStackEntry.arguments?.getString("paymentUrl") ?: ""
+        val decodedUrl = java.net.URLDecoder.decode(paymentUrl, "UTF-8")
+        
+        PaymentWebViewScreen(
+            paymentUrl = decodedUrl,
+            onBackClick = { navController.navigateUp() },
+            onPaymentResult = { result ->
+                when (result) {
+                    is PaymentResult.Success -> {
+                        navController.navigate("payment_result/success") {
+                            popUpTo("checkout") { inclusive = true }
+                        }
+                    }
+                    is PaymentResult.Failed -> {
+                        navController.navigate("payment_result/failed?errorMessage=${java.net.URLEncoder.encode(result.errorMessage, "UTF-8")}") {
+                            popUpTo("checkout") { inclusive = true }
+                        }
+                    }
+                    is PaymentResult.Cancelled -> {
+                        navController.navigate("payment_result/cancelled") {
+                            popUpTo("checkout") { inclusive = true }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    // Payment Success Screen
+    composable("payment_result/success") {
+        PaymentResultScreen(
+            paymentResult = PaymentResult.Success,
+            onNavigateToHome = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.HOME_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            },
+            onNavigateToOrders = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.ORDER_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            }
+        )
+    }
+
+    // Payment Failed Screen
+    composable(
+        route = "payment_result/failed?errorMessage={errorMessage}",
+        arguments = listOf(
+            navArgument("errorMessage") { 
+                type = NavType.StringType
+                defaultValue = "Payment failed"
+            }
+        )
+    ) { backStackEntry ->
+        val errorMessage = backStackEntry.arguments?.getString("errorMessage") ?: "Payment failed"
+        val decodedMessage = java.net.URLDecoder.decode(errorMessage, "UTF-8")
+        
+        PaymentResultScreen(
+            paymentResult = PaymentResult.Failed(decodedMessage),
+            onNavigateToHome = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.HOME_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            },
+            onNavigateToOrders = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.ORDER_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            },
+            onRetryPayment = {
+                navController.popBackStack("checkout", inclusive = false)
+            }
+        )
+    }
+
+    // Payment Cancelled Screen
+    composable("payment_result/cancelled") {
+        PaymentResultScreen(
+            paymentResult = PaymentResult.Cancelled,
+            onNavigateToHome = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.HOME_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            },
+            onNavigateToOrders = {
+                navController.navigate(com.vidz.base.navigation.DestinationRoutes.ORDER_SCREEN_ROUTE) {
+                    popUpTo(com.vidz.base.navigation.DestinationRoutes.ROOT_HOME_SCREEN_ROUTE) { inclusive = false }
+                }
+            },
+            onRetryPayment = {
+                navController.popBackStack("checkout", inclusive = false)
             }
         )
     }

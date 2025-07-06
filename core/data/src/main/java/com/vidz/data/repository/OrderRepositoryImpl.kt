@@ -8,9 +8,11 @@ import com.vidz.data.server.retrofit.api.CreateOrderRequest
 import com.vidz.data.server.retrofit.api.OrderDetailRequest as ApiOrderDetailRequest
 import com.vidz.data.server.retrofit.api.PagedResponse
 import com.vidz.data.server.retrofit.dto.OrderDto
+import com.vidz.data.server.retrofit.dto.PaymentMethodEnum
 import com.vidz.domain.Result
 import com.vidz.domain.model.OrderDto as Order
 import com.vidz.domain.model.CreateOrderResult
+import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.repository.OrderRepository
 import com.vidz.domain.repository.OrderDetailRequest
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +54,8 @@ class OrderRepositoryImpl @Inject constructor(
         accountId: Long,
         shippingInfoId: Long,
         items: List<OrderDetailRequest>,
-        voucherId: Long?
+        voucherId: Long?,
+        paymentMethod: PaymentMethod
     ): Flow<Result<CreateOrderResult>> {
         return ServerFlow(
             getData = {
@@ -66,7 +69,8 @@ class OrderRepositoryImpl @Inject constructor(
                             slotId = it.slotId
                         )
                     },
-                    voucherId = voucherId
+                    voucherId = voucherId,
+                    paymentMethod = mapPaymentMethodToDto(paymentMethod)
                 )
                 retrofitServer.orderApi.createOrder(createRequest, accountId).body()!!
             },
@@ -91,5 +95,13 @@ class OrderRepositoryImpl @Inject constructor(
                 orderMapper.toDomain(orderDto)
             }
         ).execute()
+    }
+
+    private fun mapPaymentMethodToDto(domainMethod: PaymentMethod): PaymentMethodEnum {
+        return when (domainMethod) {
+            PaymentMethod.InternalWallet -> PaymentMethodEnum.INTERNAL_WALLET
+            PaymentMethod.Paypal -> PaymentMethodEnum.PAYPAL
+            PaymentMethod.Vnpay -> PaymentMethodEnum.VNPAY
+        }
     }
 } 
