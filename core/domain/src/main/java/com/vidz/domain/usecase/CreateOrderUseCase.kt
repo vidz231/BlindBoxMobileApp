@@ -2,6 +2,7 @@ package com.vidz.domain.usecase
 
 import com.vidz.domain.Result
 import com.vidz.domain.model.CreateOrderResult
+import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.repository.OrderRepository
 import com.vidz.domain.repository.OrderDetailRequest
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +15,9 @@ class CreateOrderUseCase @Inject constructor(
         accountId: Long,
         shippingInfoId: Long,
         items: List<OrderDetailRequest>,
-        voucherId: Long? = null
+        voucherId: Long? = null,
+        paymentMethod: PaymentMethod = PaymentMethod.Vnpay
     ): Flow<Result<CreateOrderResult>> {
-        return orderRepository.createOrder(accountId, shippingInfoId, items, voucherId)
+        return orderRepository.createOrder(accountId, shippingInfoId, items, voucherId, paymentMethod)
     }
 } 

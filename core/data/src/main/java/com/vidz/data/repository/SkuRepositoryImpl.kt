@@ -1,6 +1,5 @@
 package com.vidz.data.repository
 
-import android.util.Log
 import com.vidz.data.flow.ServerFlow
 import com.vidz.data.mapper.StockKeepingUnitMapper
 import com.vidz.data.server.retrofit.RetrofitServer

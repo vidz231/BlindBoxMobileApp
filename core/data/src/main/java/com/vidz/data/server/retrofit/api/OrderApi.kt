@@ -1,6 +1,8 @@
 package com.vidz.data.server.retrofit.api
 
+import com.vidz.data.server.retrofit.dto.CartDto
 import com.vidz.data.server.retrofit.dto.OrderDto
+import com.vidz.data.server.retrofit.dto.PaymentMethodEnum
 import com.vidz.data.server.retrofit.dto.PlaceOrder200Response
 import com.vidz.data.server.retrofit.dto.PlaceOrderSuccessResponse
 import retrofit2.Response
@@ -21,10 +23,10 @@ interface OrderApi {
         @Path("orderId") orderId: Long
     ): Response<OrderDto>
 
-    @POST("orders?accountId={accountId}")
+    @POST("orders")
     suspend fun createOrder(
         @Body createRequest: CreateOrderRequest,
-        @Path("accountId") accountId: Long
+        @Query("accountId") accountId: Long
     ): Response<PlaceOrder200Response>
 
 
@@ -43,7 +45,8 @@ data class CreateOrderRequest(
     val accountId: Long,
     val shippingInfoId: Long,
     val items: List<OrderDetailRequest>,
-    val voucherId: Long? = null
+    val voucherId: Long? = null,
+    val paymentMethod: PaymentMethodEnum = PaymentMethodEnum.VNPAY
 )
 
 data class OrderDetailRequest(

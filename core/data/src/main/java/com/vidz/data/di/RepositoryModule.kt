@@ -9,6 +9,7 @@ import com.vidz.data.repository.ShippingRepositoryImpl
 import com.vidz.data.repository.SkuRepositoryImpl
 import com.vidz.data.repository.AppConfigRepositoryImpl
 import com.vidz.data.repository.TokenRefreshRepositoryImpl
+import com.vidz.data.repository.MapRepositoryImpl
 import com.vidz.domain.repository.AuthRepository
 import com.vidz.domain.repository.BlindBoxRepository
 import com.vidz.domain.repository.CartRepository
@@ -18,6 +19,7 @@ import com.vidz.domain.repository.ShippingRepository
 import com.vidz.domain.repository.SkuRepository
 import com.vidz.domain.repository.AppConfigRepository
 import com.vidz.domain.repository.TokenRefreshRepository
+import com.vidz.domain.repository.MapRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -81,5 +83,11 @@ abstract class RepositoryModule {
     abstract fun bindShippingRepository(
         shippingRepositoryImpl: ShippingRepositoryImpl
     ): ShippingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMapRepository(
+        mapRepositoryImpl: MapRepositoryImpl
+    ): MapRepository
 }
 

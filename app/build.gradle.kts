@@ -102,7 +102,10 @@ dependencies {
     implementation(projects.feature.message)
     implementation(libs.androidx.work.ktx)
     implementation(libs.hilt.ext.work)
-//
+    implementation("com.mapbox.maps:android:11.12.0")
+    implementation("com.mapbox.extension:maps-compose:11.13.1")
+//    implementation(libs.maps.annotation)
+//    implementation(libs.maps.gestures)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.ext.compiler)
 //

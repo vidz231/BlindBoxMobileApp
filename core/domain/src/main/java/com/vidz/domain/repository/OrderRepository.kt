@@ -3,6 +3,7 @@ package com.vidz.domain.repository
 import com.vidz.domain.Result
 import com.vidz.domain.model.OrderDto as Order
 import com.vidz.domain.model.CreateOrderResult
+import com.vidz.domain.model.PaymentMethod
 import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
@@ -19,7 +20,8 @@ interface OrderRepository {
         accountId: Long,
         shippingInfoId: Long,
         items: List<OrderDetailRequest>,
-        voucherId: Long? = null
+        voucherId: Long? = null,
+        paymentMethod: PaymentMethod = PaymentMethod.Vnpay
     ): Flow<Result<CreateOrderResult>>
     
     fun cancelOrder(orderId: Long): Flow<Result<Order>>

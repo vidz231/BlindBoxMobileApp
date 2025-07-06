@@ -18,7 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vidz.base.components.PrimaryButton
 import com.vidz.base.components.TopAppBarWithBack
+import com.vidz.base.components.MapComposePicker
 import com.vidz.domain.model.ShippingInfo
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ShippingSelectionScreen(
@@ -49,11 +51,11 @@ fun ShippingSelectionScreen(
     val handleConfirmSelection: () -> Unit = {
         selectedShippingInfo?.let { shippingInfo ->
             onShippingInfoSelected(shippingInfo)
-            onBackClick()
         } ?: Unit
     }
 
     val handleCreateNew = {
+        // Navigate to add shipping address screen
         onCreateNewShippingInfo()
     }
     //endregion
@@ -62,6 +64,7 @@ fun ShippingSelectionScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        val context = androidx.compose.ui.platform.LocalContext.current
         TopAppBarWithBack(
             title = "Select Shipping Address",
             onBackClick = onBackClick
@@ -78,42 +81,23 @@ fun ShippingSelectionScreen(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                    // Mapbox Integration Area
+                    // Map picker allowing user to tap and choose a point
                     Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(horizontal = 16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(horizontal = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Map",
-                                modifier = Modifier.size(48.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "Mapbox Integration Area",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "Map will be rendered here",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        MapComposePicker(
+                            modifier = Modifier.fillMaxSize(),
+                            onPointSelected = { point ->
+                                viewModel.onMapPointSelected(point, context)
+                            }
+                        )
                     }
-                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -299,4 +283,4 @@ fun ShippingSelectionScreen(
     //region Dialog and Sheet
     //end region
     //end region
-} 
+}

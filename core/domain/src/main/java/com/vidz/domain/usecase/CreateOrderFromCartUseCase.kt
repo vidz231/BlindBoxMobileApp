@@ -4,6 +4,7 @@ import com.vidz.domain.Result
 import com.vidz.domain.ServerError
 import com.vidz.domain.Success
 import com.vidz.domain.model.CreateOrderResult
+import com.vidz.domain.model.PaymentMethod
 import com.vidz.domain.repository.CartRepository
 import com.vidz.domain.repository.OrderDetailRequest
 import com.vidz.domain.repository.OrderRepository
@@ -19,7 +20,8 @@ class CreateOrderFromCartUseCase @Inject constructor(
     operator fun invoke(
         accountId: Long,
         shippingInfoId: Long,
-        voucherId: Long? = null
+        voucherId: Long? = null,
+        paymentMethod: PaymentMethod = PaymentMethod.Vnpay
     ): Flow<Result<CreateOrderResult>> = flow {
         // Get current cart items
         val cartItems = cartRepository.observeCartItems().first()
@@ -43,7 +45,8 @@ class CreateOrderFromCartUseCase @Inject constructor(
             accountId = accountId,
             shippingInfoId = shippingInfoId,
             items = orderDetailRequests,
-            voucherId = voucherId
+            voucherId = voucherId,
+            paymentMethod = paymentMethod
         ).collect { result ->
             when (result) {
                 is Success -> {
