@@ -5,6 +5,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ fun PaymentWebViewScreen(
 ) {
     //region Define Var
     var isLoading by remember { mutableStateOf(true) }
+    var hasHandledResult by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Create & remember WebView so it survives recomposition
@@ -54,32 +56,66 @@ fun PaymentWebViewScreen(
                 override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                     super.onPageStarted(view, url, favicon)
                     isLoading = true
+                    android.util.Log.d("PaymentWebView", "Page started loading: $url")
                 }
 
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
                     isLoading = false
-                    url?.let { handleUrl(it) }
+                    android.util.Log.d("PaymentWebView", "Page finished loading: $url")
+                    
+                    // Only handle URL on page finish if it's a result URL (success/failure/cancel)
+                    // Don't immediately handle error pages to let user see them
+                    url?.let { 
+                        if (shouldHandleUrlImmediately(it) && !hasHandledResult) {
+                            hasHandledResult = true
+                            handleUrl(it)
+                        }
+                    }
                 }
 
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                     val url = request?.url?.toString() ?: return false
-                    handleUrl(url)
+                    android.util.Log.d("PaymentWebView", "URL loading: $url")
+                    
+                    // Only handle result URLs, let other URLs load normally
+                    if (shouldHandleUrlImmediately(url) && !hasHandledResult) {
+                        hasHandledResult = true
+                        handleUrl(url)
+                        return true // Prevent further loading since we're handling the result
+                    }
+                    
                     return false // Let WebView load it
                 }
 
-                fun handleUrl(u: String) {
+                private fun shouldHandleUrlImmediately(url: String): Boolean {
+                    return when {
+                        // Only handle definitive success responses
+                        url.contains("vnp_ResponseCode=00") -> true
+                        // Handle specific failure response codes (not error pages)
+                        url.contains("vnp_ResponseCode=") && !url.contains("vnp_ResponseCode=00") && !url.contains("/Payment/Error.html") -> true
+                        // Handle explicit cancel URLs
+                        url.contains("cancel") && !url.contains("/Payment/Error.html") -> true
+                        else -> false
+                    }
+                }
+
+                private fun handleUrl(u: String) {
+                    android.util.Log.d("PaymentWebView", "Handling URL result: $u")
                     when {
-                        u.contains("vnp_ResponseCode=00") -> onPaymentResult(PaymentResult.Success)
+                        u.contains("vnp_ResponseCode=00") -> {
+                            android.util.Log.d("PaymentWebView", "Payment successful")
+                            onPaymentResult(PaymentResult.Success)
+                        }
                         u.contains("vnp_ResponseCode=") && !u.contains("vnp_ResponseCode=00") -> {
                             val code = extractResponseCode(u)
+                            android.util.Log.d("PaymentWebView", "Payment failed with response code: $code")
                             onPaymentResult(PaymentResult.Failed(getVNPayErrorMessage(code)))
                         }
-                        u.contains("/Payment/Error.html?code=") -> {
-                            val code = extractErrorCode(u)
-                            onPaymentResult(PaymentResult.Failed("VNPay error code: $code"))
+                        u.contains("cancel") -> {
+                            android.util.Log.d("PaymentWebView", "Payment cancelled")
+                            onPaymentResult(PaymentResult.Cancelled)
                         }
-                        u.contains("cancel") || u.contains("error") -> onPaymentResult(PaymentResult.Cancelled)
                     }
                 }
             }
@@ -95,12 +131,20 @@ fun PaymentWebViewScreen(
 
     // Load URL on first composition or when url changes
     LaunchedEffect(paymentUrl) {
+        android.util.Log.d("PaymentWebView", "Loading payment URL: $paymentUrl")
+        hasHandledResult = false // Reset for new payment URL
         webView.loadUrl(paymentUrl)
     }
 
     //region ui
     Column(modifier = modifier.fillMaxSize()) {
-        TopAppBarWithBack(title = "Payment", onBackClick = onBackClick)
+        TopAppBarWithBack(
+            title = "Payment", 
+            onBackClick = {
+                android.util.Log.d("PaymentWebView", "Back clicked from payment webview")
+                onBackClick()
+            }
+        )
 
         if (isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -111,7 +155,43 @@ fun PaymentWebViewScreen(
             }
         }
 
-        AndroidView(factory = { webView }, update = { /* no-op, handled by loadUrl effect */ }, modifier = Modifier.fillMaxSize())
+        Box(modifier = Modifier.fillMaxSize()) {
+            AndroidView(
+                factory = { webView }, 
+                update = { /* no-op, handled by loadUrl effect */ }, 
+                modifier = Modifier.fillMaxSize()
+            )
+            
+            // Add a floating action button to manually trigger error handling if needed
+            // This helps when the user sees an error page and wants to go back
+            if (!isLoading && !hasHandledResult) {
+                FloatingActionButton(
+                    onClick = {
+                        android.util.Log.d("PaymentWebView", "Manual error handling triggered")
+                        val currentUrl = webView.url
+                        if (currentUrl != null && currentUrl.contains("/Payment/Error.html?code=")) {
+                            hasHandledResult = true
+                            val code = extractErrorCode(currentUrl)
+                            onPaymentResult(PaymentResult.Failed("VNPay error code: $code"))
+                        } else {
+                            // If it's not an error page, assume user wants to cancel
+                            hasHandledResult = true
+                            onPaymentResult(PaymentResult.Cancelled)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.error
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Payment",
+                        tint = MaterialTheme.colorScheme.onError
+                    )
+                }
+            }
+        }
     }
     //endregion
 }

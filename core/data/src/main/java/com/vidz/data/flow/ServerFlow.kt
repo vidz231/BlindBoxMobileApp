@@ -6,6 +6,7 @@ import com.vidz.domain.ServerError
 import com.vidz.domain.Success
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
 import retrofit2.HttpException
 import java.net.ConnectException
 
@@ -29,23 +30,35 @@ class ServerFlow<T, R>(
                 // Handle cases where response.body() returns null (usually due to error responses)
                 emit(ServerError.General("Request failed: Invalid credentials or server error"))
             } catch (netWorkException: HttpException) {
-                if (netWorkException.code() == 401) {
-                    emit(ServerError.Token("Token expired"))
-                } else if (netWorkException.code() == 400) {
-                    emit(ServerError.MissingParam("Missing parameter"))
-                } else if (netWorkException.code() == 403) {
-                    emit(ServerError.RequiredLogin("Login required"))
-                } else if (netWorkException.code() == 404) {
-                    emit(ServerError.RequiredVip("VIP required"))
-                } else if (netWorkException.code() == 402) {
-                    emit(ServerError.NotEnoughCredit("Not enough credit"))
-                } else {
-                    emit(ServerError.General(netWorkException.message()))
+                val serverErrorMessage = extractServerErrorMessage(netWorkException)
+                
+                when (netWorkException.code()) {
+                    401 -> emit(ServerError.Token(serverErrorMessage ?: "Token expired"))
+                    400 -> emit(ServerError.MissingParam(serverErrorMessage ?: "Missing parameter"))
+                    403 -> emit(ServerError.RequiredLogin(serverErrorMessage ?: "Login required"))
+                    404 -> emit(ServerError.RequiredVip(serverErrorMessage ?: "VIP required"))
+                    402 -> emit(ServerError.NotEnoughCredit(serverErrorMessage ?: "Not enough credit"))
+                    else -> emit(ServerError.General(serverErrorMessage ?: netWorkException.message() ?: "Unknown server error"))
                 }
             } catch (exception: Exception) {
                 // Handle any other unexpected exceptions
                 emit(ServerError.General("Unexpected error: ${exception.message}"))
             }
+        }
+    }
+    
+    private fun extractServerErrorMessage(httpException: HttpException): String? {
+        return try {
+            val errorBody = httpException.response()?.errorBody()?.string()
+            if (!errorBody.isNullOrEmpty()) {
+                val jsonObject = JSONObject(errorBody)
+                jsonObject.optString("error").takeIf { it.isNotEmpty() }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // If parsing fails, return null to fall back to default messages
+            null
         }
     }
 }

@@ -16,3 +16,6 @@ local.properties
 /configuration-cache-report.html
 */*/build
 /app/src/main/res/values/mapbox-access-token.xml
+/build-logic/build/reports/configuration-cache/*
+/build-logic/build/reports/*
+/.idea/*

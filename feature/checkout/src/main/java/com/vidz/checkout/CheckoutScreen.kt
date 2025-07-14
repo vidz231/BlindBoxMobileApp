@@ -1,5 +1,6 @@
 package com.vidz.checkout
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -74,9 +75,13 @@ fun CheckoutScreen(
         }
     }
 
-    LaunchedEffect(uiState.orderCreated) {
+    LaunchedEffect(uiState.orderCreated, uiState.paymentRedirectUrl) {
+        Log.d("CheckoutScreen", "LaunchedEffect triggered - orderCreated: ${uiState.orderCreated}, paymentRedirectUrl: ${uiState.paymentRedirectUrl}")
         if (uiState.orderCreated && uiState.paymentRedirectUrl.isNotEmpty()) {
+            Log.d("CheckoutScreen", "Navigating to payment with URL: ${uiState.paymentRedirectUrl}")
             onNavigateToPayment(uiState.paymentRedirectUrl)
+            // Reset order state after navigation to prevent re-triggering
+            viewModel.onTriggerEvent(CheckoutViewModel.CheckoutViewEvent.ResetOrderState)
         }
     }
 

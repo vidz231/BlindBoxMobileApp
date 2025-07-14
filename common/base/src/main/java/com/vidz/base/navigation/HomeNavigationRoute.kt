@@ -17,6 +17,7 @@ object DestinationRoutes {
     const val ITEM_DETAIL_SCREEN_ROUTE = "$ITEM_DETAIL_SCREEN_BASE_ROUTE/{blindBoxId}/{imageUrl}/{title}"
 
     const val ROOT_EDIT_PROFILE_SCREEN_ROUTE = "${SETTING_SCREEN_ROUTE}/edit_profile"
+    const val APP_SETTINGS_SCREEN_ROUTE = "${SETTING_SCREEN_ROUTE}/app_settings"
 
     const val CHECKOUT_SUCCESS_SCREEN_ROUTE = "${CHECKOUT_SCREEN_ROUTE}/checkout_success"
     const val CHECKOUT_FAILURE_SCREEN_ROUTE = "${CHECKOUT_SCREEN_ROUTE}/checkout_failure"

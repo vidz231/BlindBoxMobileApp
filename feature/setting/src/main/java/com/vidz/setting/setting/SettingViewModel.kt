@@ -49,9 +49,6 @@ class SettingViewModel @Inject constructor(
 
     override fun onTriggerEvent(event: SettingEvent) {
         when (event) {
-            is SettingEvent.OnTabChanged -> {
-                updateSelectedTab(event.tab)
-            }
             SettingEvent.OnRefreshTransactions -> {
                 // Clear transactions first to allow reloading
                 transactionsLoaded = false
@@ -168,12 +165,6 @@ class SettingViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun updateSelectedTab(tab: SettingTab) {
-        viewModelState.value = viewModelState.value.copy(
-            selectedTab = tab
-        )
     }
 
     private fun loadUserProfile() {
@@ -499,7 +490,6 @@ class SettingViewModel @Inject constructor(
 }
 
 data class SettingViewModelState(
-    val selectedTab: SettingTab = SettingTab.TRANSACTIONS,
     val userProfile: Account? = null,
     val transactions: List<Transaction> = emptyList(),
     val filteredTransactions: List<Transaction> = emptyList(),
@@ -512,7 +502,6 @@ data class SettingViewModelState(
     val isAuthenticated: Boolean = false
 ) : ViewModelState() {
     override fun toUiState(): ViewState = SettingUiState(
-        selectedTab = selectedTab,
         userProfile = userProfile,
         transactions = filteredTransactions,
         transactionFilter = transactionFilter,
@@ -526,7 +515,6 @@ data class SettingViewModelState(
 }
 
 data class SettingUiState(
-    val selectedTab: SettingTab = SettingTab.TRANSACTIONS,
     val userProfile: Account? = null,
     val transactions: List<Transaction> = emptyList(),
     val transactionFilter: TransactionFilter = TransactionFilter.ALL,
@@ -539,7 +527,6 @@ data class SettingUiState(
 ) : ViewState()
 
 sealed class SettingEvent : ViewEvent {
-    data class OnTabChanged(val tab: SettingTab) : SettingEvent()
     data object OnRefreshTransactions : SettingEvent()
     data class OnThemeChanged(val themeMode: ThemeMode) : SettingEvent()
     data class OnNotificationToggled(val enabled: Boolean) : SettingEvent()
@@ -552,11 +539,6 @@ sealed class SettingEvent : ViewEvent {
     data class OnTransactionFilterChanged(val filter: TransactionFilter) : SettingEvent()
     data object OnRefreshAuth : SettingEvent()
     data object OnLogoutClicked : SettingEvent()
-}
-
-enum class SettingTab(val displayName: String) {
-    TRANSACTIONS("Transactions"),
-    APP_SETTINGS("App Settings")
 }
 
 enum class TransactionFilter(val displayName: String) {

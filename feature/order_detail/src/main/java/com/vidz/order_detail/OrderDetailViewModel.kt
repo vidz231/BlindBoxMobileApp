@@ -122,7 +122,7 @@ class OrderDetailViewModel @Inject constructor(
 
     // View Model State
     data class OrderDetailViewModelState(
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val error: String? = null,
         val order: OrderDto? = null,
         val isCancelled: Boolean = false

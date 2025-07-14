@@ -1,5 +1,9 @@
 package com.vidz.checkout
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -13,7 +17,7 @@ fun NavGraphBuilder.addCheckoutNavGraph(
     navController: NavController,
     onShowSnackbar: (String) -> Unit
 ) {
-    // Main Checkout Screen
+    //region Main Checkout Screen
     composable(
         route = "checkout?checkoutType={checkoutType}&buyNowSkuId={buyNowSkuId}&buyNowQuantity={buyNowQuantity}&buyNowName={buyNowName}&buyNowPrice={buyNowPrice}&buyNowImageUrl={buyNowImageUrl}&buyNowBlindBoxName={buyNowBlindBoxName}",
         arguments = listOf(
@@ -87,8 +91,9 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             onShowSnackbar = onShowSnackbar
         )
     }
+    //endregion
 
-    // Shipping Selection Screen
+    //region Shipping Selection Screen
     composable("shipping_selection") {
         ShippingSelectionScreen(
             onBackClick = { navController.navigateUp() },
@@ -102,8 +107,9 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             }
         )
     }
+    //endregion
 
-    // Add Shipping Address Screen
+    //region Add Shipping Address Screen
     composable("add_shipping_address") {
         AddShippingAddressScreen(
             onBackClick = { navController.navigateUp() },
@@ -113,15 +119,52 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             }
         )
     }
+    //endregion
 
-    // Payment WebView Screen
+    //region Payment WebView Screen
     composable(
         route = "payment_webview?paymentUrl={paymentUrl}",
         arguments = listOf(
-            navArgument("paymentUrl") { 
-                type = NavType.StringType 
+            navArgument("paymentUrl") {
+                type = NavType.StringType
             }
-        )
+        ),
+        enterTransition = {
+            slideInVertically(
+                initialOffsetY = { fullHeight -> fullHeight },
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutVertically(
+                targetOffsetY = { fullHeight -> -fullHeight },
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        },
+        popEnterTransition = {
+            slideInVertically(
+                initialOffsetY = { fullHeight -> fullHeight },
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        },
+        popExitTransition = {
+            slideOutVertically(
+                targetOffsetY = { fullHeight -> -fullHeight },
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        }
     ) { backStackEntry ->
         val paymentUrl = backStackEntry.arguments?.getString("paymentUrl") ?: ""
         val decodedUrl = java.net.URLDecoder.decode(paymentUrl, "UTF-8")
@@ -132,26 +175,21 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             onPaymentResult = { result ->
                 when (result) {
                     is PaymentResult.Success -> {
-                        navController.navigate("payment_result/success") {
-                            popUpTo("checkout") { inclusive = true }
-                        }
+                        navController.navigate("payment_result/success")
                     }
                     is PaymentResult.Failed -> {
-                        navController.navigate("payment_result/failed?errorMessage=${java.net.URLEncoder.encode(result.errorMessage, "UTF-8")}") {
-                            popUpTo("checkout") { inclusive = true }
-                        }
+                        navController.navigate("payment_result/failed?errorMessage=${java.net.URLEncoder.encode(result.errorMessage, "UTF-8")}")
                     }
                     is PaymentResult.Cancelled -> {
-                        navController.navigate("payment_result/cancelled") {
-                            popUpTo("checkout") { inclusive = true }
-                        }
+                        navController.navigate("payment_result/cancelled")
                     }
                 }
             }
         )
     }
+    //endregion
 
-    // Payment Success Screen
+    //region Payment Success Screen
     composable("payment_result/success") {
         PaymentResultScreen(
             paymentResult = PaymentResult.Success,
@@ -167,8 +205,9 @@ fun NavGraphBuilder.addCheckoutNavGraph(
             }
         )
     }
+    //endregion
 
-    // Payment Failed Screen
+    //region Payment Failed Screen
     composable(
         route = "payment_result/failed?errorMessage={errorMessage}",
         arguments = listOf(
@@ -176,7 +215,8 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 type = NavType.StringType
                 defaultValue = "Payment failed"
             }
-        )
+        ),
+
     ) { backStackEntry ->
         val errorMessage = backStackEntry.arguments?.getString("errorMessage") ?: "Payment failed"
         val decodedMessage = java.net.URLDecoder.decode(errorMessage, "UTF-8")
@@ -194,12 +234,14 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 }
             },
             onRetryPayment = {
-                navController.popBackStack("checkout", inclusive = false)
+                // Navigate back to checkout by popping the payment result screen
+                navController.navigateUp()
             }
         )
     }
+    //endregion
 
-    // Payment Cancelled Screen
+    //region Payment Cancelled Screen
     composable("payment_result/cancelled") {
         PaymentResultScreen(
             paymentResult = PaymentResult.Cancelled,
@@ -214,8 +256,10 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 }
             },
             onRetryPayment = {
-                navController.popBackStack("checkout", inclusive = false)
+                // Navigate back to checkout by popping the payment result screen
+                navController.navigateUp()
             }
         )
     }
+    //endregion
 } 

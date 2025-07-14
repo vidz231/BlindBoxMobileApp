@@ -48,6 +48,7 @@ class CheckoutViewModel @Inject constructor(
         data object CreateOrderFromCart : CheckoutViewEvent()
         data object CreateOrderBuyNow : CheckoutViewEvent()
         data object ClearSnackbarMessage : CheckoutViewEvent()
+        data object ResetOrderState : CheckoutViewEvent()
     }
 
     data class CheckoutViewState(
@@ -86,7 +87,7 @@ class CheckoutViewModel @Inject constructor(
         val snackbarMessage: String = ""
     ) : ViewModelState() {
         override fun toUiState(): ViewState {
-            return CheckoutViewState(
+            val uiState = CheckoutViewState(
                 isLoading = isLoading,
                 checkoutItems = checkoutItems,
                 selectedShippingInfo = selectedShippingInfo,
@@ -102,6 +103,10 @@ class CheckoutViewModel @Inject constructor(
                 errorMessage = errorMessage,
                 snackbarMessage = snackbarMessage
             )
+            if (orderCreated && paymentRedirectUrl.isNotEmpty()) {
+                Log.d("CheckoutViewModel", "toUiState() - orderCreated: $orderCreated, paymentUrl: $paymentRedirectUrl")
+            }
+            return uiState
         }
 
         private fun calculateFinalTotal(): Double {
@@ -121,6 +126,7 @@ class CheckoutViewModel @Inject constructor(
             is CheckoutViewEvent.CreateOrderFromCart -> createOrderFromCart()
             is CheckoutViewEvent.CreateOrderBuyNow -> createOrderBuyNow()
             is CheckoutViewEvent.ClearSnackbarMessage -> clearSnackbarMessage()
+            is CheckoutViewEvent.ResetOrderState -> resetOrderState()
         }
     }
 
@@ -279,6 +285,16 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
+    private fun resetOrderState() {
+        viewModelState.update {
+            it.copy(
+                orderCreated = false,
+                paymentRedirectUrl = "",
+                errorMessage = ""
+            )
+        }
+    }
+
     private suspend fun getCurrentUserId(): Long? {
         return try {
             var userId: Long? = null
@@ -381,11 +397,13 @@ class CheckoutViewModel @Inject constructor(
                             Log.d("CheckoutViewModel", "Order created successfully: ${result.data.order.orderId}")
                             Log.d("CheckoutViewModel", "Payment URL: ${result.data.paymentRedirectUrl}")
                             viewModelState.update {
-                                it.copy(
+                                val newState = it.copy(
                                     isProcessingOrder = false,
                                     orderCreated = true,
                                     paymentRedirectUrl = result.data.paymentRedirectUrl
                                 )
+                                Log.d("CheckoutViewModel", "Updated cart state - orderCreated: ${newState.orderCreated}, paymentUrl: ${newState.paymentRedirectUrl}")
+                                newState
                             }
                         }
                         is ServerError -> {
@@ -507,11 +525,13 @@ class CheckoutViewModel @Inject constructor(
                             Log.d("CheckoutViewModel", "Buy now order created successfully: ${result.data.order.orderId}")
                             Log.d("CheckoutViewModel", "Payment URL: ${result.data.paymentRedirectUrl}")
                             viewModelState.update {
-                                it.copy(
+                                val newState = it.copy(
                                     isProcessingOrder = false,
                                     orderCreated = true,
                                     paymentRedirectUrl = result.data.paymentRedirectUrl
                                 )
+                                Log.d("CheckoutViewModel", "Updated state - orderCreated: ${newState.orderCreated}, paymentUrl: ${newState.paymentRedirectUrl}")
+                                newState
                             }
                         }
                         is ServerError -> {

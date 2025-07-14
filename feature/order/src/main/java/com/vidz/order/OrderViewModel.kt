@@ -93,7 +93,7 @@ class OrderViewModel @Inject constructor(
 
     // View Model State
     data class OrderViewModelState(
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val error: String? = null,
         val orders: List<OrderDto> = emptyList()
     ) : ViewModelState() {
