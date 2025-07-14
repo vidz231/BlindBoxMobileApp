@@ -22,7 +22,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://52.163.66.235:8080/api/v1/\"",
+                "\"https://blindbox-w3cil4hv.southeastasia.cloudapp.azure.com/api/v1/\"",
                 )
             buildConfigField(
                 "String",
