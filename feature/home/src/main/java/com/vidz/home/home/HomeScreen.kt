@@ -79,8 +79,6 @@ import com.vidz.blindbox.feature.home.R
 @Composable
 fun HomeScreenRoot(
     navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -88,8 +86,6 @@ fun HomeScreenRoot(
     HomeScreen(
         navController = navController,
         homeUiState = homeUiState,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedContentScope = animatedContentScope,
         onEvent = homeViewModel::onTriggerEvent
     )
 }
@@ -100,8 +96,6 @@ fun HomeScreenRoot(
 fun HomeScreen(
     navController: NavController,
     homeUiState: State<HomeViewModel.HomeViewState>,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onEvent: (HomeViewModel.HomeViewEvent) -> Unit
 ) {
     //region Define Var
@@ -193,8 +187,6 @@ fun HomeScreen(
                             ModernBlindBoxItem(
                                 blindBox = blindBox,
                                 onClick = { onItemClick(blindBox) },
-                                sharedTransitionScope = sharedTransitionScope,
-                                animatedContentScope = animatedContentScope,
                                 index = index
                             )
 
@@ -265,11 +257,8 @@ fun ModernAppBar(
 fun ModernBlindBoxItem(
     blindBox: BlindBox,
     onClick: () -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     index: Int
 ) {
-    with(sharedTransitionScope) {
         var isPressed by remember { mutableStateOf(false) }
         val scale by animateFloatAsState(
             targetValue = if (isPressed) 0.95f else 1f,
@@ -311,10 +300,6 @@ fun ModernBlindBoxItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "image-${blindBox.blindBoxId}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
                         .clip(RoundedCornerShape(20.dp))
                         .background(
                             Brush.verticalGradient(
@@ -393,10 +378,7 @@ fun ModernBlindBoxItem(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "title-${blindBox.blindBoxId}"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
+
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -411,7 +393,6 @@ fun ModernBlindBoxItem(
                     )
                 }
             }
-        }
     }
 }
 

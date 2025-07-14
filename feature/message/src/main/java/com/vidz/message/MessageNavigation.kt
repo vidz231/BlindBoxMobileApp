@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.vidz.base.navigation.DestinationRoutes
+import com.vidz.base.navigation.NavigationAnimations
 
 fun NavGraphBuilder.addMessageNavGraph(
     navController: NavController,
@@ -13,10 +14,10 @@ fun NavGraphBuilder.addMessageNavGraph(
 ) {
     composable(
         DestinationRoutes.MESSAGE_SCREEN_ROUTE,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition =  NavigationAnimations.enterTransition ,
+        exitTransition =  NavigationAnimations.exitTransition ,
+        popEnterTransition =  NavigationAnimations.popEnterTransition ,
+        popExitTransition =  NavigationAnimations.popExitTransition
     ) {
         MessageScreenRoot(navController)
     }

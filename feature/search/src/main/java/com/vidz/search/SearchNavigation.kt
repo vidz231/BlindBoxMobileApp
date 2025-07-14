@@ -10,16 +10,16 @@ import androidx.navigation.compose.composable
 import com.vidz.base.navigation.DestinationRoutes
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-fun NavGraphBuilder.addSearchNavGraph(
+fun NavGraphBuilder.
+        addSearchNavGraph(
     navController: NavController,
     onShowSnackbar: (String) -> Unit,
-    sharedTransitionScope: SharedTransitionScope
 ) {
     composable(DestinationRoutes.SEARCH_SCREEN_ROUTE,
                enterTransition = { EnterTransition.None },
                exitTransition = { ExitTransition.None },
                popEnterTransition = { EnterTransition.None },
                popExitTransition = { ExitTransition.None }) {
-        SearchScreen(navController, sharedTransitionScope, this@composable)
+        SearchScreen(navController)
     }
 }

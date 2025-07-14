@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vidz.base.navigation.DestinationRoutes
+import com.vidz.base.navigation.NavigationAnimations
 import com.vidz.domain.model.ShippingInfo
 
 fun NavGraphBuilder.addCheckoutNavGraph(
@@ -44,7 +45,11 @@ fun NavGraphBuilder.addCheckoutNavGraph(
                 type = NavType.StringType
                 defaultValue = ""
             }
-        )
+        ),
+        enterTransition =  NavigationAnimations.enterTransition ,
+        exitTransition =  NavigationAnimations.exitTransition ,
+        popEnterTransition =  NavigationAnimations.popEnterTransition ,
+        popExitTransition =  NavigationAnimations.popExitTransition
     ) { backStackEntry ->
         val checkoutType = backStackEntry.arguments?.getString("checkoutType") ?: "FROM_CART"
         val buyNowSkuId = backStackEntry.arguments?.getString("buyNowSkuId")?.toLongOrNull() ?: 0L

@@ -9,13 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vidz.base.navigation.DestinationRoutes
+import com.vidz.base.navigation.NavigationAnimations
 import java.net.URLDecoder
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.addDetailNavGraph(
     navController: NavController,
     onShowSnackbar: (String) -> Unit,
-    sharedTransitionScope: androidx.compose.animation.SharedTransitionScope
 ) {
     composable(
         DestinationRoutes.ITEM_DETAIL_SCREEN_ROUTE,
@@ -24,10 +24,10 @@ fun NavGraphBuilder.addDetailNavGraph(
             navArgument("imageUrl") { type = NavType.StringType },
             navArgument("title") { type = NavType.StringType }
         ),
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition =  NavigationAnimations.enterTransition ,
+        exitTransition =  NavigationAnimations.exitTransition ,
+        popEnterTransition =  NavigationAnimations.popEnterTransition ,
+        popExitTransition =  NavigationAnimations.popExitTransition
     ) { backStackEntry ->
         val blindBoxId = backStackEntry.arguments?.getLong("blindBoxId") ?: 0L
         val encodedImageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
@@ -41,7 +41,6 @@ fun NavGraphBuilder.addDetailNavGraph(
             blindBoxId = blindBoxId,
             initialImageUrl = imageUrl,
             initialTitle = title,
-            sharedTransitionScope = sharedTransitionScope,
             animatedContentScope = this,
             onShowSnackbar = onShowSnackbar
         )

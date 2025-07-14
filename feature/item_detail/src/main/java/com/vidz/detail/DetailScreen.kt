@@ -86,7 +86,6 @@ fun DetailScreen(
     blindBoxId: Long,
     initialImageUrl: String,
     initialTitle: String,
-    sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onShowSnackbar: (String) -> Unit,
     detailViewModel: DetailViewModel = hiltViewModel()

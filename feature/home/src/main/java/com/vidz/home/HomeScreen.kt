@@ -27,14 +27,10 @@ import com.vidz.home.home.HomeViewModel
 @Composable
 fun HomeScreen(
     navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     HomeScreenRoot(
         navController = navController,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedContentScope = animatedContentScope,
         homeViewModel = homeViewModel
     )
 }

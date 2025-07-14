@@ -68,8 +68,6 @@ import java.net.URLEncoder
 @Composable
 fun SearchScreen(
     navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -77,12 +75,12 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         "Search",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
-                    ) 
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -142,8 +140,6 @@ fun SearchScreen(
                 uiState.hasSearched -> {
                     SearchResults(
                         results = uiState.searchResults,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedContentScope = animatedContentScope,
                         onItemClick = { blindBox ->
                             // Navigate using blindBoxId, imageUrl, and title for immediate display
                             val imageUrl = blindBox.images.firstOrNull()?.imageUrl ?: ""
@@ -234,8 +230,6 @@ private fun FilterSection(
 @Composable
 private fun SearchResults(
     results: List<BlindBox>,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onItemClick: (BlindBox) -> Unit
 ) {
     if (results.isEmpty()) {
@@ -257,8 +251,6 @@ private fun SearchResults(
             items(results) { blindBox ->
                 SearchResultItem(
                     blindBox = blindBox,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
                     onClick = { onItemClick(blindBox) }
                 )
             }
@@ -270,74 +262,67 @@ private fun SearchResults(
 @Composable
 private fun SearchResultItem(
     blindBox: BlindBox,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onClick: () -> Unit
 ) {
-    with(sharedTransitionScope) {
-        Card(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick() },
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            shape = RoundedCornerShape(12.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            // Image with shared element transition
+            AsyncImage(
+                model = blindBox.images.firstOrNull()?.imageUrl ?: "",
+                contentDescription = blindBox.name,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                // Image with shared element transition
-                AsyncImage(
-                    model = blindBox.images.firstOrNull()?.imageUrl ?: "",
-                    contentDescription = blindBox.name,
-                    contentScale = ContentScale.Crop,
+                // Title with shared element transition
+                Text(
+                    text = blindBox.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .size(80.dp)
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "image-${blindBox.blindBoxId}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                        .clip(RoundedCornerShape(8.dp))
+
                 )
-                
-                Spacer(modifier = Modifier.width(16.dp))
 
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    // Title with shared element transition
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Description (using HtmlTextView for compatibility)
+                HtmlTextView(blindBox.description)
+
+                if (blindBox.skus.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = blindBox.name,
+                        text = "From $${
+                            String.format(
+                                "%.2f",
+                                blindBox.skus.minOfOrNull { it.price } ?: 0.0)
+                        }",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "title-${blindBox.blindBoxId}"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    // Description (using HtmlTextView for compatibility)
-                    HtmlTextView(blindBox.description)
-
-                    if (blindBox.skus.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "From $${String.format("%.2f", blindBox.skus.minOfOrNull { it.price } ?: 0.0)}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
                 }
             }
         }

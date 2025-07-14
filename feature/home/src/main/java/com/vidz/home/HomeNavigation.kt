@@ -13,7 +13,6 @@ import com.vidz.base.navigation.DestinationRoutes
 fun NavGraphBuilder.addHomeNavGraph(
     navController: NavController,
     onShowSnackbar: (String) -> Unit,
-    sharedTransitionScope: SharedTransitionScope
 ) {
     composable(DestinationRoutes.HOME_SCREEN_ROUTE,
                enterTransition = { EnterTransition.None },
@@ -21,6 +20,6 @@ fun NavGraphBuilder.addHomeNavGraph(
                popEnterTransition = { EnterTransition.None },
                popExitTransition = { ExitTransition.None }
                ) {
-        HomeScreen(navController, sharedTransitionScope, this@composable)
+        HomeScreen(navController, )
     }
 }

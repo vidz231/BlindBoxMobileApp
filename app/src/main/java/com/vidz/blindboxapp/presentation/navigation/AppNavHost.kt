@@ -11,6 +11,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.vidz.auth.addAuthNavGraph
@@ -35,7 +36,6 @@ fun AppNavHost(
     navController: NavHostController,
     onShowSnackbar: (String) -> Unit
 ) {
-    SharedTransitionLayout {
         NavHost(
             navController = navController,
             startDestination = DestinationRoutes.ROOT_HOME_SCREEN_ROUTE,
@@ -44,27 +44,28 @@ fun AppNavHost(
             popEnterTransition = popEnterTransition,
             popExitTransition = popExitTransition
         ) {
-            addHomeGraph(navController, onShowSnackbar, this@SharedTransitionLayout)
+            addHomeGraph(navController, onShowSnackbar)
 
-            addDetailNavGraph(navController, onShowSnackbar, this@SharedTransitionLayout)
+            addDetailNavGraph(navController, onShowSnackbar)
             addAuthNavGraph(navController, onShowSnackbar)
         }
     }
-}
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.addHomeGraph(
     navController: NavController,
     onShowSnackbar: (String) -> Unit,
-    sharedTransitionScope: androidx.compose.animation.SharedTransitionScope
 ) {
 
     navigation(
         route = DestinationRoutes.ROOT_HOME_SCREEN_ROUTE,
         startDestination = DestinationRoutes.HOME_SCREEN_ROUTE,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
-        addHomeNavGraph(navController, onShowSnackbar, sharedTransitionScope)
-        addSearchNavGraph(navController, onShowSnackbar, sharedTransitionScope)
+        addHomeNavGraph(navController, onShowSnackbar)
+        addSearchNavGraph(navController, onShowSnackbar)
         addCartNavGraph(navController, onShowSnackbar)
         addCheckoutNavGraph(navController, onShowSnackbar)
         addSettingNavGraph(navController, onShowSnackbar)

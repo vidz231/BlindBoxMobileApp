@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vidz.base.navigation.DestinationRoutes
+import com.vidz.base.navigation.NavigationAnimations
 import com.vidz.order_detail.OrderDetailScreen
 
 fun NavGraphBuilder.addOrderNavGraph(
@@ -29,7 +30,11 @@ fun NavGraphBuilder.addOrderNavGraph(
             navArgument("orderId") {
                 type = NavType.StringType
             }
-        )
+        ),
+        enterTransition =  NavigationAnimations.enterTransition ,
+        exitTransition =  NavigationAnimations.exitTransition ,
+        popEnterTransition =  NavigationAnimations.popEnterTransition ,
+        popExitTransition =  NavigationAnimations.popExitTransition
     ) { backStackEntry ->
         val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
         OrderDetailScreen(
